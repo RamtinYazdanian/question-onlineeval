@@ -66,8 +66,11 @@ def recom_result():
         doc_dot_products = (doc_latent.dot(
                     np.reshape(this_user_latent_profile, (this_user_latent_profile.size,1)))).flatten()
 
+        doc_index_to_index = json.load(open('static/doc_index_index.json', mode='r'))
+        doc_index_to_index = {int(k):int(doc_index_to_index[k]) for k in doc_index_to_index}
         best_docs = np.argsort(doc_dot_products)
         best_docs = best_docs[::-1]
+        best_docs = [doc_index_to_index[x] for x in best_docs]
         doc_id_to_index = json.load(open('static/doc_id_index.json'))
         doc_index_to_id = {int(doc_id_to_index[x]):int(x) for x in doc_id_to_index}
         doc_id_to_name = json.load(open('static/docid_docname.json', mode='r'))
