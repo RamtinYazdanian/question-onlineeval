@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block head %}
+    <title>Wikipedia Questionnaire</title>
+{% endblock %}
+
+{% block navbar %}
+    <li class="nav-item">
+        <a class="nav-link js-scroll-trigger" href="#howto">How To</a>
+    </li>
+    <li>
+        <a class="nav-link js-scroll-trigger" href="#questions">Questions</a>
+    </li>
+    <li>
+        <a class="nav-link js-scroll-trigger" href="#submit">Submit</a>
+    </li>
+{% endblock %}
+
+{% block body %}
+
+    <header class="bg-primary text-white">
+      <div class="container text-center">
+        <h1>Welcome to WikiQuest!</h1>
+        <p class="lead">A questionnaire aiming to extract your interests in Wikipedia.</p>
+      </div>
+    </header>
+
+    <section id="howto">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    This questionnaire contains {{ n_q }} questions, which attempt to capture your topics of interest,
+                    based on which we will recommend articles to you. After having answered all the questions,
+                    the system will compute the recommendations and show them to you, and then we kindly ask
+                    for your feedback on the results. Some notes: <br>
+                    <ul>
+                        <li>Please have cookies enabled. If you do not have them enabled, please enable them
+                        and refresh this page.</li>
+                        <li>Each question is of the form "Set A or Set B?", the available answers being A,
+                        B, or Neither. Only a single answer is possible for each question.</li>
+                        <li>Please answer all {{ n_q }} questions. Because we're evaluating our system
+                        based on this, we need full information on how users interact with each question. The
+                        form cannot be submitted without having chosen an answer for each question.</li>
+                        <li>This page is best viewed on non-mobile platforms.</li>
+                        <li>We greatly appreciate your help. :)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="questions">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+                <table cellpadding="20">
+                    <form name="questionnaire" action = "/result" method = "POST" onsubmit="if (!is_complete()){event.preventDefault();}">
+                        {% for key in range(n_q) %}
+
+                            {% set question_value = questions[key|string] %}
+                            {% set word_cloud_value = word_clouds[key|string] %}
+
+
+                            <tr><td colspan="2"><h2 id="q{{ key }}">Question {{ key + 1 }}</h2></td></tr>
+                            <tr>
+                            <td>
+                                <b>Set A:</b> <br>
+                            <ul>
+                            {% for x in question_value['top'] %}
+                                <li>{{ x }}</li>
+                            {% endfor %}
+                            </ul>
+                            </td>
+
+                            <td>
+                                <b>Set B:</b> <br>
+                            <ul>
+                            {% for x in question_value['bottom'] %}
+                                <li>{{ x }}</li>
+                            {% endfor %}
+                            </ul>
+                            </td>
+                            </tr>
+                            <tr>
+                            <td>
+                                <b>Most important words:</b> <br><br>
+                                <img src="{{ cloud_dir }}{{ key }}_top.png">
+                            </td>
+
+                            <td>
+                                <b>Most important words:</b> <br><br>
+                                <img src="{{ cloud_dir }}{{ key }}_bottom.png">
+                            </td>
+                            </tr>
+                            <tr><td colspan="2" style="text-align: center"><h4>Your answer:</h4>
+                            <fieldset id="group{{ key }}">
+                                <input type="radio" id="r{{ key }}1" value="1" name="group{{ key }}"><label for="r{{ key }}1">Set A</label>
+                                <input type="radio" id="r{{ key }}2" value="-1" name="group{{ key }}"><label for="r{{ key }}2">Set B</label>
+                                <input type="radio" id="r{{ key }}3" value="0" name="group{{ key }}"><label for="r{{ key }}3">Neither</label>
+                            </fieldset>
+                            </td></tr>
+
+                        {% endfor %}
+
+                        <tr><td colspan="3" align="center"><p><input id="submit" type = "submit" value = "Submit"/></p></td></tr>
+                      </form>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block head %}
+    <title>Your recommendations</title>
+{% endblock %}
+
+{% block navbar %}
+    <li class="nav-item">
+        <a class="nav-link js-scroll-trigger" href="#info">Notes</a>
+    </li>
+    <li>
+        <a class="nav-link js-scroll-trigger" href="#recoms">Your recommendations</a>
+    </li>
+    <li>
+        <a class="nav-link js-scroll-trigger" href="#submit">Submit</a>
+    </li>
+{% endblock %}
+
+{% block body %}
+<header class="bg-primary text-white">
+      <div class="container text-center">
+        <h1>Your recommendations are here!</h1>
+        <p class="lead">Please rate them from 1 to 5 (very bad to very good).</p>
+      </div>
+</header>
+
+<section id="info">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                A few tips: <br>
+                <ul>
+                    <li>The document are shown below their names so you can take a peek.</li>
+                    <li>For each document, we have also listed some of their most frequent editors. If you are interested
+                    in editing the article, you could try getting in touch with these veterans and forming groups.</li>
+                    <li>Once you've rated them all, please press the submit button.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="recoms">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+                <table border="0" width="100%">
+                    <form name="feedback" action = "/thankyou" method = "POST">
+                        {% for recom_number in recommendations %}
+                            {% set recom_fields = recommendations[recom_number] %}
+                            <tr><td><b>Recommendation #{{ recom_number + 1 }}</b></td></tr>
+                            <tr>
+                            <td>
+                                <h2 id="recom{{ recom_number }}">Document name: {{ recom_fields['name'] }}</h2>
+                            </td>
+                            </tr>
+                            <tr><td>
+                                <div data-role="popup" id="popup{{ recom_number }}" data-overlay-theme="b" data-theme="a" data-tolerance="15,15" class="ui-content">
+                                    <iframe src="https://en.wikipedia.org/w/index.php?search={{ recom_fields['name'] }}&title=Special%3ASearch&go=Go" width="100%", height="300"></iframe>
+                                </div>
+                            </td></tr>
+                            <tr><td>
+                                The usernames of some of its most frequent editors:
+                            <ul>
+                            {% for x in recom_fields['fervent_editors'] %}
+                                <li>{{ x }}</li>
+                            {% endfor %}
+                            </ul>
+                            </td>
+{#                            <td>#}
+{#                                <iframe style='display: block; position: absolute; background: transparent; width: 100%; height:100%;' src="https://en.wikipedia.org/w/index.php?search={{ recom_fields['name'] }}&title=Special%3ASearch&go=Go" frameborder="0" scrolling="no"></iframe>#}
+{#                            </td>#}
+                            </tr>
+                            <tr><td>How much does this document seem like one you'd like to edit?
+                            <fieldset id="group{{ recom_number }}">
+                                <input type="radio" id="r{{ recom_number }}1" value="1" name="group{{ recom_number }}"><label for="r{{ recom_number }}1">1</label>
+                                <input type="radio" id="r{{ recom_number }}2" value="2" name="group{{ recom_number }}"><label for="r{{ recom_number }}2">2</label>
+                                <input type="radio" id="r{{ recom_number }}3" value="3" name="group{{ recom_number }}" checked><label for="r{{ recom_number }}3">3</label>
+                                <input type="radio" id="r{{ recom_number }}4" value="4" name="group{{ recom_number }}"><label for="r{{ recom_number }}4">4</label>
+                                <input type="radio" id="r{{ recom_number }}5" value="5" name="group{{ recom_number }}"><label for="r{{ recom_number }}5">5</label>
+                            </fieldset>
+                            </td></tr>
+
+                        {% endfor %}
+
+                        <tr><td align="center"><p><input id="submit" type = "submit" value = "Submit"/></p></td></tr>
+                      </form>
+                </table>
+
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
