@@ -49,75 +49,73 @@
     <section id="questions">
       <div class="container">
         <div class="row">
-          <div class="col-lg-8 mx-auto">
+          <div class="col-10 mx-auto">
                     <form name="questionnaire" action = "/result" method = "POST" onsubmit="if (!is_complete()){event.preventDefault();}">
                         {% for key in range(n_q) %}
 
                             <div id="group{{ key }}" class="frmdiv">
-                            <table cellpadding="10">
                             <fieldset>
 
                                 {% set question_value = questions[key|string] %}
                                 {% set word_cloud_value = word_clouds[key|string] %}
 
 
-                                <tr><td colspan="2"><h2 id="q{{ key }}">Question {{ key + 1 }}</h2></td></tr>
-                                <tr>
-                                    <td>
+                                <h2 id="q{{ key }}">Question {{ key + 1 }}</h2>
+                                <div class="row">
+                                    <div class="col left mx-auto">
                                         <b>Set A:</b> <br>
                                         <ul>
                                         {% for x in question_value['top'] %}
                                             <li>{{ x }}</li>
                                         {% endfor %}
                                         </ul>
-                                    </td>
-
-                                    <td>
+                                    </div>
+                                    <div class="col right mx-auto">
                                         <b>Set B:</b> <br>
                                         <ul>
                                         {% for x in question_value['bottom'] %}
                                             <li>{{ x }}</li>
                                         {% endfor %}
                                         </ul>
-                                    </td>
-                                </tr>
-                                <tr>
-                                <td>
-                                    <b>Most important words:</b> <br><br>
-                                    <img src="{{ cloud_dir }}{{ key }}_top.png">
-                                </td>
-
-                                <td>
-                                    <b>Most important words:</b> <br><br>
-                                    <img src="{{ cloud_dir }}{{ key }}_bottom.png">
-                                </td>
-                                </tr>
-
-                                <tr><td colspan="2" style="text-align: center"><h4>Your answer:</h4>
-                                    <input type="radio" id="r{{ key }}1" value="1" name="group{{ key }}"><label for="r{{ key }}1">Set A</label>
-                                    <input type="radio" id="r{{ key }}2" value="-1" name="group{{ key }}"><label for="r{{ key }}2">Set B</label>
-                                    <input type="radio" id="r{{ key }}3" value="0" name="group{{ key }}"><label for="r{{ key }}3">Neither</label>
-                                </td></tr>
-                                <tr><td colspan="3" align="center">
-                                    <div class="form-group">
-                                        <div class="col-lg-10 col-lg-offset-3">
-
-                                            {% if key != 0 %}
-                                                <button class="btn btn-dark" id="tofirst{{ key }}" type="button"><span class="fa fa-arrow-left"></span> To first</button>
-                                                <button class="btn btn-warning" id="back{{ key }}" type="button"><span class="fa fa-arrow-left"></span> Back</button>
-                                            {% endif %}
-
-                                            {% if key != n_q - 1 %}
-                                                <button class="btn btn-primary" id="next{{ key }}" type="button">Next <span class="fa fa-arrow-right"></span></button>
-                                                <button class="btn btn-dark" id="tolast{{ key }}" type="button"><span class="fa fa-arrow-left"></span> To last</button>
-                                            {% else %}
-                                                <input class="btn btn-primary" id="next{{ key }}" type = "submit" value = "Submit"/>
-                                            {% endif %}
-                                        </div>
                                     </div>
-                                </td></tr>
+                                </div>
+                                <div class="row">
+                                    <div class="col left mx-auto">
+                                        <b>Most important words:</b> <br><br>
+                                        <img src="{{ cloud_dir }}{{ key }}_top.png">
+                                    </div>
+
+                                    <div class="col right mx-auto">
+                                        <b>Most important words:</b> <br><br>
+                                        <img src="{{ cloud_dir }}{{ key }}_bottom.png">
+                                    </div>
+                                </div>
+
+                                <div class="mx-auto">
+                                    <h4>Your answer:</h4>
+                                        <input type="radio" id="r{{ key }}1" value="1" name="group{{ key }}"><label for="r{{ key }}1">Set A</label>
+                                        <input type="radio" id="r{{ key }}2" value="-1" name="group{{ key }}"><label for="r{{ key }}2">Set B</label>
+                                        <input type="radio" id="r{{ key }}3" value="0" name="group{{ key }}"><label for="r{{ key }}3">Neither</label>
+
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-lg-10 col-lg-offset-3">
+
+                                        {% if key != 0 %}
+                                            <button class="btn btn-dark" id="tofirst{{ key }}" type="button"><span class="fa fa-arrow-left"></span> To first</button>
+                                            <button class="btn btn-warning" id="back{{ key }}" type="button"><span class="fa fa-arrow-left"></span> Back</button>
+                                        {% endif %}
+
+                                        {% if key != n_q - 1 %}
+                                            <button class="btn btn-primary" id="next{{ key }}" type="button">Next <span class="fa fa-arrow-right"></span></button>
+                                            <button class="btn btn-dark" id="tolast{{ key }}" type="button"><span class="fa fa-arrow-left"></span> To last</button>
+                                        {% else %}
+                                            <input class="btn btn-primary" id="next{{ key }}" type = "submit" value = "Submit"/>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
                             </fieldset>
-                            </table>
                             </div>
 
 
