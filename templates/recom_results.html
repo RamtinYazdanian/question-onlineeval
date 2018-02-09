@@ -10,9 +10,6 @@
     <li>
         <a class="nav-link js-scroll-trigger" href="#recoms">Your recommendations</a>
     </li>
-    <li>
-        <a class="nav-link js-scroll-trigger" href="#submit">Submit</a>
-    </li>
 {% endblock %}
 
 {% block body %}
@@ -43,52 +40,106 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-8 mx-auto">
-                <table border="0" width="100%">
+
                     <form name="feedback" action = "/thankyou" method = "POST">
                         {% for recom_number in recommendations %}
                             {% set recom_fields = recommendations[recom_number] %}
-                            <tr><td><b>Recommendation #{{ recom_number + 1 }}</b></td></tr>
-                            <tr>
-                            <td>
-                                <h2 id="recom{{ recom_number }}">Document name: {{ recom_fields['name'] }}</h2>
-                            </td>
-                            </tr>
-                            <tr><td>
-                                <div data-role="popup" id="popup{{ recom_number }}" data-overlay-theme="b" data-theme="a" data-tolerance="15,15" class="ui-content">
-                                    <iframe src="https://en.wikipedia.org/w/index.php?search={{ recom_fields['name'] }}&title=Special%3ASearch&go=Go" width="100%", height="300"></iframe>
-                                </div>
-                            </td></tr>
-                            <tr><td>
-                                The usernames of some of its most frequent editors:
-                            <ul>
-                            {% for x in recom_fields['fervent_editors'] %}
-                                <li>{{ x }}</li>
-                            {% endfor %}
-                            </ul>
-                            </td>
-{#                            <td>#}
-{#                                <iframe style='display: block; position: absolute; background: transparent; width: 100%; height:100%;' src="https://en.wikipedia.org/w/index.php?search={{ recom_fields['name'] }}&title=Special%3ASearch&go=Go" frameborder="0" scrolling="no"></iframe>#}
-{#                            </td>#}
-                            </tr>
-                            <tr><td>How much does this document seem like one you'd like to edit?
-                            <fieldset id="group{{ recom_number }}">
-                                <input type="radio" id="r{{ recom_number }}1" value="1" name="group{{ recom_number }}"><label for="r{{ recom_number }}1">1</label>
-                                <input type="radio" id="r{{ recom_number }}2" value="2" name="group{{ recom_number }}"><label for="r{{ recom_number }}2">2</label>
-                                <input type="radio" id="r{{ recom_number }}3" value="3" name="group{{ recom_number }}" checked><label for="r{{ recom_number }}3">3</label>
-                                <input type="radio" id="r{{ recom_number }}4" value="4" name="group{{ recom_number }}"><label for="r{{ recom_number }}4">4</label>
-                                <input type="radio" id="r{{ recom_number }}5" value="5" name="group{{ recom_number }}"><label for="r{{ recom_number }}5">5</label>
-                            </fieldset>
-                            </td></tr>
+                                <div id="group{{ recom_number }}" class="frmdiv">
+                                    <table border="0" width="100%">
+                                        <fieldset>
+                                            <tr><td><b>Recommendation #{{ recom_number + 1 }}</b></td></tr>
+                                            <tr>
+                                                <td>
+                                                    <h2 id="recom{{ recom_number }}">Document name: {{ recom_fields['name'] }}</h2>
+                                                </td>
+                                            </tr>
+                                            <tr><td>
+                                                <div data-role="popup" id="popup{{ recom_number }}" data-overlay-theme="b" data-theme="a" data-tolerance="15,15" class="ui-content">
+                                                    <iframe src="https://en.wikipedia.org/w/index.php?search={{ recom_fields['name'] }}&title=Special%3ASearch&go=Go" width="100%", height="300"></iframe>
+                                                </div>
+                                            </td></tr>
+                                            <tr><td>
+                                                The usernames of some of its most frequent editors:
+                                                <ul>
+                                                {% for x in recom_fields['fervent_editors'] %}
+                                                    <li>{{ x }}</li>
+                                                {% endfor %}
+                                                </ul>
+                                            </td>
+                                            </tr>
+                                            <tr><td>How much does this document seem like one you'd like to edit?
+                                                <input type="radio" id="r{{ recom_number }}1" value="1" name="group{{ recom_number }}"><label for="r{{ recom_number }}1">1</label>
+                                                <input type="radio" id="r{{ recom_number }}2" value="2" name="group{{ recom_number }}"><label for="r{{ recom_number }}2">2</label>
+                                                <input type="radio" id="r{{ recom_number }}3" value="3" name="group{{ recom_number }}" checked><label for="r{{ recom_number }}3">3</label>
+                                                <input type="radio" id="r{{ recom_number }}4" value="4" name="group{{ recom_number }}"><label for="r{{ recom_number }}4">4</label>
+                                                <input type="radio" id="r{{ recom_number }}5" value="5" name="group{{ recom_number }}"><label for="r{{ recom_number }}5">5</label>
+                                            </td></tr>
+                                            <tr><td colspan="3" align="center">
+                                                <div class="form-group">
+                                                    <div class="col-lg-10 col-lg-offset-3">
 
+                                                        {% if recom_number != 0 %}
+                                                            <button class="btn btn-dark" id="tofirst{{ recom_number }}" type="button"><span class="fa fa-arrow-left"></span> To first</button>
+                                                            <button class="btn btn-warning" id="back{{ recom_number }}" type="button"><span class="fa fa-arrow-left"></span> Back</button>
+                                                        {% endif %}
+
+                                                        {% if recom_number != recommendations|length - 1 %}
+                                                            <button class="btn btn-primary" id="next{{ recom_number }}" type="button">Next <span class="fa fa-arrow-right"></span></button>
+                                                            <button class="btn btn-dark" id="tolast{{ recom_number }}" type="button"><span class="fa fa-arrow-left"></span> To last</button>
+                                                        {% else %}
+                                                            <input class="btn btn-primary" id="next{{ recom_number }}" type = "submit" value = "Submit"/>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </td></tr>
+                                        </fieldset>
+                                    </table>
+                                </div>
                         {% endfor %}
 
-                        <tr><td align="center"><p><input id="submit" type = "submit" value = "Submit"/></p></td></tr>
                       </form>
-                </table>
+
 
 
             </div>
         </div>
     </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".frmdiv").hide();
+        $("#group0").show();
+        {% for key in recommendations %}
+            {%if  key != 0 %}
+                $("#back{{ key }}").click(function() {
+                    $(".frmdiv").hide("fast");
+                    $("#group{{ key - 1 }}").show("fast");
+                    $(document).scrollTop( $("#recoms").offset().top );
+                });
+                $("#tofirst{{ key }}").click(function () {
+                    $(".frmdiv").hide("fast");
+                    $("#group0").show("fast");
+                    $(document).scrollTop( $("#recoms").offset().top );
+                });
+            {% endif %}
+            {% if key != recommendations|length - 1 %}
+                $("#next{{ key }}").click(function() {
+                    $(".frmdiv").hide("fast");
+                    $("#group{{ key + 1 }}").show("fast");
+                    $(document).scrollTop( $("#recoms").offset().top );
+                });
+                $("#tolast{{ key }}").click(function () {
+                    $(".frmdiv").hide("fast");
+                    $("#group{{ recommendations|length - 1 }}").show("fast");
+                    $(document).scrollTop( $("#recoms").offset().top );
+                });
+            {% endif %}
+        {% endfor %}
+
+    });
+
+</script>
 {% endblock %}

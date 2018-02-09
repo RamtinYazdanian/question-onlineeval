@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block head %}
     <title>Wikipedia Questionnaire</title>
+
 {% endblock %}
 
 {% block navbar %}
@@ -9,9 +10,6 @@
     </li>
     <li>
         <a class="nav-link js-scroll-trigger" href="#questions">Questions</a>
-    </li>
-    <li>
-        <a class="nav-link js-scroll-trigger" href="#submit">Submit</a>
     </li>
 {% endblock %}
 
@@ -52,61 +50,122 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-8 mx-auto">
-                <table cellpadding="20">
                     <form name="questionnaire" action = "/result" method = "POST" onsubmit="if (!is_complete()){event.preventDefault();}">
                         {% for key in range(n_q) %}
 
-                            {% set question_value = questions[key|string] %}
-                            {% set word_cloud_value = word_clouds[key|string] %}
+                            <div id="group{{ key }}" class="frmdiv">
+                            <table cellpadding="10">
+                            <fieldset>
+
+                                {% set question_value = questions[key|string] %}
+                                {% set word_cloud_value = word_clouds[key|string] %}
 
 
-                            <tr><td colspan="2"><h2 id="q{{ key }}">Question {{ key + 1 }}</h2></td></tr>
-                            <tr>
-                            <td>
-                                <b>Set A:</b> <br>
-                            <ul>
-                            {% for x in question_value['top'] %}
-                                <li>{{ x }}</li>
-                            {% endfor %}
-                            </ul>
-                            </td>
+                                <tr><td colspan="2"><h2 id="q{{ key }}">Question {{ key + 1 }}</h2></td></tr>
+                                <tr>
+                                    <td>
+                                        <b>Set A:</b> <br>
+                                        <ul>
+                                        {% for x in question_value['top'] %}
+                                            <li>{{ x }}</li>
+                                        {% endfor %}
+                                        </ul>
+                                    </td>
 
-                            <td>
-                                <b>Set B:</b> <br>
-                            <ul>
-                            {% for x in question_value['bottom'] %}
-                                <li>{{ x }}</li>
-                            {% endfor %}
-                            </ul>
-                            </td>
-                            </tr>
-                            <tr>
-                            <td>
-                                <b>Most important words:</b> <br><br>
-                                <img src="{{ cloud_dir }}{{ key }}_top.png">
-                            </td>
+                                    <td>
+                                        <b>Set B:</b> <br>
+                                        <ul>
+                                        {% for x in question_value['bottom'] %}
+                                            <li>{{ x }}</li>
+                                        {% endfor %}
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                <td>
+                                    <b>Most important words:</b> <br><br>
+                                    <img src="{{ cloud_dir }}{{ key }}_top.png">
+                                </td>
 
-                            <td>
-                                <b>Most important words:</b> <br><br>
-                                <img src="{{ cloud_dir }}{{ key }}_bottom.png">
-                            </td>
-                            </tr>
-                            <tr><td colspan="2" style="text-align: center"><h4>Your answer:</h4>
-                            <fieldset id="group{{ key }}">
-                                <input type="radio" id="r{{ key }}1" value="1" name="group{{ key }}"><label for="r{{ key }}1">Set A</label>
-                                <input type="radio" id="r{{ key }}2" value="-1" name="group{{ key }}"><label for="r{{ key }}2">Set B</label>
-                                <input type="radio" id="r{{ key }}3" value="0" name="group{{ key }}"><label for="r{{ key }}3">Neither</label>
+                                <td>
+                                    <b>Most important words:</b> <br><br>
+                                    <img src="{{ cloud_dir }}{{ key }}_bottom.png">
+                                </td>
+                                </tr>
+
+                                <tr><td colspan="2" style="text-align: center"><h4>Your answer:</h4>
+                                    <input type="radio" id="r{{ key }}1" value="1" name="group{{ key }}"><label for="r{{ key }}1">Set A</label>
+                                    <input type="radio" id="r{{ key }}2" value="-1" name="group{{ key }}"><label for="r{{ key }}2">Set B</label>
+                                    <input type="radio" id="r{{ key }}3" value="0" name="group{{ key }}"><label for="r{{ key }}3">Neither</label>
+                                </td></tr>
+                                <tr><td colspan="3" align="center">
+                                    <div class="form-group">
+                                        <div class="col-lg-10 col-lg-offset-3">
+
+                                            {% if key != 0 %}
+                                                <button class="btn btn-dark" id="tofirst{{ key }}" type="button"><span class="fa fa-arrow-left"></span> To first</button>
+                                                <button class="btn btn-warning" id="back{{ key }}" type="button"><span class="fa fa-arrow-left"></span> Back</button>
+                                            {% endif %}
+
+                                            {% if key != n_q - 1 %}
+                                                <button class="btn btn-primary" id="next{{ key }}" type="button">Next <span class="fa fa-arrow-right"></span></button>
+                                                <button class="btn btn-dark" id="tolast{{ key }}" type="button"><span class="fa fa-arrow-left"></span> To last</button>
+                                            {% else %}
+                                                <input class="btn btn-primary" id="next{{ key }}" type = "submit" value = "Submit"/>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td></tr>
                             </fieldset>
-                            </td></tr>
+                            </table>
+                            </div>
+
 
                         {% endfor %}
 
-                        <tr><td colspan="3" align="center"><p><input id="submit" type = "submit" value = "Submit"/></p></td></tr>
+
                       </form>
-                </table>
+
             </div>
         </div>
     </div>
 </section>
 
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".frmdiv").hide();
+        $("#group0").show();
+        {% for key in range(n_q) %}
+            {%if  key != 0 %}
+                $("#back{{ key }}").click(function() {
+                    $(".frmdiv").hide("fast");
+                    $("#group{{ key - 1 }}").show("fast");
+                    $(document).scrollTop( $("#questions").offset().top );
+                });
+                $("#tofirst{{ key }}").click(function () {
+                    $(".frmdiv").hide("fast");
+                    $("#group0").show("fast");
+                    $(document).scrollTop( $("#questions").offset().top );
+                });
+            {% endif %}
+            {% if key != n_q - 1 %}
+                $("#next{{ key }}").click(function() {
+                    $(".frmdiv").hide("fast");
+                    $("#group{{ key + 1 }}").show("fast");
+                    $(document).scrollTop( $("#questions").offset().top );
+                });
+                $("#tolast{{ key }}").click(function () {
+                    $(".frmdiv").hide("fast");
+                    $("#group{{ n_q - 1 }}").show("fast");
+                    $(document).scrollTop( $("#questions").offset().top );
+                });
+            {% endif %}
+        {% endfor %}
+
+    });
+
+</script>
 {% endblock %}

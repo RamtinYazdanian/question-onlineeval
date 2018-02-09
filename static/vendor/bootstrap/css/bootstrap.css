@@ -6514,6 +6514,10 @@ button.bg-dark:focus {
   border: 0;
 }
 
+.frmdiv{
+  display: block;
+}
+
 .embed-responsive-21by9::before {
   padding-top: 42.857143%;
 }
