@@ -1,10 +1,10 @@
 from flask import Flask, render_template, request, make_response
-#import flask_bootstrap
 import json
 import pickle
 import os
 import sys
 import numpy as np
+from common_utils import make_sure_path_exists
 import random
 from datetime import datetime
 
@@ -160,6 +160,8 @@ def thank_you_page():
         output_filename = str(datetime.now())
         output_filename = output_filename.replace(' ', '_').replace(':','_').replace('.','_').replace('-','_')
         output_filename = output_filename + '_' + str(random.randint(0,20000))
+
+        make_sure_path_exists(settings['output_dir'])
         json.dump(result_to_save, open(settings['output_dir']+output_filename+'.json', mode='w'))
 
         return render_template('thanks.html')
