@@ -14,7 +14,6 @@ app = Flask(__name__, static_folder='static')
 def q_form():
     settings = json.load(open('static/settings.json', mode='r'))
     n_q = settings['n_q']
-    #question_mode = str(random.randint(0,1))
     question_mode = '1'
     questions = json.load(open(settings['modes'][question_mode]['questions'], mode='r'))
     questions = {str(k):questions[str(k)] for k in range(n_q)}
