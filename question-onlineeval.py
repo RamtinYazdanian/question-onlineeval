@@ -159,7 +159,7 @@ def thank_you_page():
 
         output_filename = str(datetime.now())
         output_filename = output_filename.replace(' ', '_').replace(':','_').replace('.','_').replace('-','_')
-        output_filename = output_filename + '_' + str(random.randint(0,20000))
+        output_filename = output_filename + '_' + str(random.randint(0,200000))
 
         make_sure_path_exists(settings['output_dir'])
         json.dump(result_to_save, open(settings['output_dir']+output_filename+'.json', mode='w'))
