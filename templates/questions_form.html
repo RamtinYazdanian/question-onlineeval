@@ -66,7 +66,7 @@
                                         <b>Set A:</b> <br>
                                         <ul>
                                         {% for x in question_value['top'] %}
-                                            <li>{{ x }}</li>
+                                            <li><a href="https://en.wikipedia.org/wiki/{{ x }}">{{ x }}</a> </li>
                                         {% endfor %}
                                         </ul>
                                     </div>
@@ -74,7 +74,7 @@
                                         <b>Set B:</b> <br>
                                         <ul>
                                         {% for x in question_value['bottom'] %}
-                                            <li>{{ x }}</li>
+                                            <li><a href="https://en.wikipedia.org/wiki/{{ x }}">{{ x }}</a></li>
                                         {% endfor %}
                                         </ul>
                                     </div>
