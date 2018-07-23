@@ -80,12 +80,19 @@
               }
           }
           if (document.getElementById("name_field") != null){
-              var email_address = document.getElementById("name_field").value;
-              var emailFilter = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-              if (!emailFilter.test(email_address)){
-                  alert("Please enter a valid e-mail address.");
+              var username_val = document.getElementById("name_field").value;
+              if (username_val == ""){
+                  alert("Please enter your username!");
                   return false;
               }
+              //var emailFilter = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+              //if (!emailFilter.test(email_address)){
+              //    alert("Please enter a valid e-mail address.");
+              //    return false;
+              //}
+          }
+          else{
+              return false;
           }
           return true;
         }
