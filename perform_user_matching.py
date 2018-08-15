@@ -24,7 +24,9 @@ def main():
                 "list of usernames to discard, and performs two matchings: one score-based and one random, saving the " \
                 "results in the output dir. The results are two JSON files with the matched pairs as values " \
                 "(and indices as keys), and " \
-                "one JSON file that maps the username of each participant to their two matches.\n" \
+                "one JSON file that maps the username of each participant to their two matches. In the " \
+                "latter file, each username is mapped to a list of two usernames, the first of which is " \
+                "their question-based match, and the second is their random match.\n" \
                 "Args:\n" \
                 "1. Input dir containing the JSON files\n" \
                 "2. Text file containing the usernames to skip.\n" \
@@ -62,14 +64,19 @@ def main():
         resulting_users[current_username] = current_content
         n_q = len(current_content['answers'])
 
+    print('Number of questions:')
+    print(n_q)
+
     index_to_user = dict(enumerate(resulting_users.keys()))
     user_to_index = invert_dict(index_to_user)
 
     # Question-based matching
+    print('Starting question-based matching...')
     answers_mat = generate_answers_mat(resulting_users, user_to_index, n_q)
     adj_mat = create_user_mat(answers_mat)
     q_based_matched_indices = set(max_pair_matching(adj_mat))
 
+    print('Question-based matching done, starting random matching...')
     random_done = False
     while not random_done:
         random_permutation = random.sample(list(range(len(resulting_users))), len(resulting_users))
@@ -86,12 +93,16 @@ def main():
             random_done = True
             break
 
+    print('Random matching finished, producing outputs.')
+
     random_match_names = dict(enumerate([(index_to_user[x[0]], index_to_user[x[1]]) for x in random_matched_indices]))
     q_based_match_names = dict(enumerate([(index_to_user[x[0]], index_to_user[x[1]], adj_mat[x[0],x[1]])
                                           for x in q_based_matched_indices]))
 
     q_based_matched_indices = list(q_based_matched_indices)
 
+    # In the following dict, each username will be mapped to two other usernames, the first of which
+    # comes from q_based_matched_indices and the second of which comes from random_matched_indices.
     user_to_matches_dict = {i:[] for i in range(0,len(resulting_users))}
     matching_lists = [q_based_matched_indices, random_matched_indices]
     for j in range(len(matching_lists)):
@@ -99,9 +110,17 @@ def main():
         for user_pair in current_matched_indices_list:
             user_to_matches_dict[user_pair[0]].append(user_pair[1])
             user_to_matches_dict[user_pair[1]].append(user_pair[0])
+        print('Performing sanity checks!')
+        print('The following must be equal to '+str(j+1))
+        print(sum([len(x) for x in user_to_matches_dict.values()]) / len(user_to_matches_dict))
+
 
     user_to_matches_dict = {index_to_user[i]: [index_to_user[y] for y in user_to_matches_dict[i]]
                             for i in user_to_matches_dict}
+
+    print('Performing sanity checks!')
+    print('The following must be equal to 2.')
+    print(sum([len(x) for x in user_to_matches_dict.values()]) / len(user_to_matches_dict))
 
     make_sure_path_exists(output_dir)
     with open(os.path.join(output_dir, 'random_matches.json'), mode='w') as f:
