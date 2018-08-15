@@ -68,6 +68,8 @@ def main():
 
     print('Number of questions:')
     print(n_q)
+    print('Number of users')
+    print(len(resulting_users))
 
     index_to_user = dict(enumerate(resulting_users.keys()))
     user_to_index = invert_dict(index_to_user)
@@ -78,7 +80,10 @@ def main():
     adj_mat = create_user_mat(answers_mat)
     q_based_matched_indices = set(max_pair_matching(adj_mat))
 
+    print('Length of question-based matching list:')
+    print(len(q_based_matched_indices))
     print('Question-based matching done, starting random matching...')
+
     random_done = False
     while not random_done:
         random_permutation = random.sample(list(range(len(resulting_users))), len(resulting_users))
@@ -95,6 +100,8 @@ def main():
             random_done = True
             break
 
+    print('Length of random matching list')
+    print(len(random_matched_indices))
     print('Random matching finished, producing outputs.')
 
     random_match_names = dict(enumerate([(index_to_user[x[0]], index_to_user[x[1]]) for x in random_matched_indices]))
@@ -113,8 +120,9 @@ def main():
             user_to_matches_dict[user_pair[0]].append(user_pair[1])
             user_to_matches_dict[user_pair[1]].append(user_pair[0])
         print('Performing sanity checks!')
-        print('The following must be equal to '+str(j+1))
-        print(sum([len(x) for x in user_to_matches_dict.values()]) / len(user_to_matches_dict))
+        print('The following two must be equal:')
+        print(sum([len(x) for x in user_to_matches_dict.values()]))
+        print(len(user_to_matches_dict))
 
 
     user_to_matches_dict = {index_to_user[i]: [index_to_user[y] for y in user_to_matches_dict[i]]
