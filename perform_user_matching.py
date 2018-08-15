@@ -124,7 +124,7 @@ def main():
         print('Performing sanity checks!')
         print('The following two must be equal:')
         print(sum([len(x) for x in user_to_matches_dict.values()]))
-        print(len(user_to_matches_dict))
+        print((j+1)*len(user_to_matches_dict))
 
 
     user_to_matches_dict = {index_to_user[i]: [index_to_user[y] for y in user_to_matches_dict[i]]
