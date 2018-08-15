@@ -47,10 +47,6 @@ def main():
     files_list = os.listdir(input_dir)
     files_list = sorted(files_list)
 
-    # We can only match an even number of people, so if the total number is odd, we sacrifice the last one.
-    if len(files_list) % 2 == 1:
-        files_list = files_list[:len(files_list)-1]
-
     n_q = 0
 
     for response_filename in files_list:
@@ -65,6 +61,12 @@ def main():
             print('Keeping latest response')
         resulting_users[current_username] = current_content
         n_q = len(current_content['answers'])
+
+    # We can only match an even number of people, so if the total number is odd, we sacrifice the last one.
+    if len(resulting_users) % 2 == 1:
+        resulting_usernames = list(resulting_users.keys())
+        resulting_usernames = resulting_usernames[:len(resulting_usernames) - 1]
+        resulting_users = {k:resulting_users[k] for k in resulting_usernames}
 
     print('Number of questions:')
     print(n_q)
