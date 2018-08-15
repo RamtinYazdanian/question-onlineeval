@@ -7,12 +7,12 @@ import os
 import random
 
 def generate_answers_mat(user_to_contents, user_to_index, n_q=20):
-    answers_mat = np.zeros(len(user_to_contents), n_q)
+    answers_mat = np.zeros((len(user_to_contents), n_q))
 
     for username in user_to_contents:
         current_responses = user_to_contents[username]['answers']
         current_index = user_to_index[username]
-        current_response_vector = np.zeros(n_q)
+        current_response_vector = np.zeros((n_q))
         for i in range(n_q):
             current_response_vector[i] = current_responses[str(i)]
         answers_mat[current_index, :] = current_response_vector
