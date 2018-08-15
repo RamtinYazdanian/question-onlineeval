@@ -130,10 +130,6 @@ def main():
     user_to_matches_dict = {index_to_user[i]: [index_to_user[y] for y in user_to_matches_dict[i]]
                             for i in user_to_matches_dict}
 
-    print('Performing sanity checks!')
-    print('The following must be equal to 2.')
-    print(sum([len(x) for x in user_to_matches_dict.values()]) / len(user_to_matches_dict))
-
     make_sure_path_exists(output_dir)
     with open(os.path.join(output_dir, 'random_matches.json'), mode='w') as f:
         json.dump(random_match_names, f)
