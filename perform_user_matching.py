@@ -48,7 +48,7 @@ def main():
     files_list = sorted(files_list)
 
     n_q = 0
-
+    n_users_with_emails = 0
     for response_filename in files_list:
         current_content = json.load(open(os.path.join(input_dir, response_filename), mode='r'))
         current_username = current_content['username']
@@ -59,6 +59,8 @@ def main():
         if resulting_users.get(current_username, None) is not None:
             print('Repeated user: ' + current_username)
             print('Keeping latest response')
+        if current_username.find('@') != -1:
+            n_users_with_emails += 1
         resulting_users[current_username] = current_content
         n_q = len(current_content['answers'])
 
@@ -72,6 +74,8 @@ def main():
     print(n_q)
     print('Number of users')
     print(len(resulting_users))
+    print('Number of users who provided emails instead of usernames')
+    print(n_users_with_emails)
 
     index_to_user = dict(enumerate(resulting_users.keys()))
     user_to_index = invert_dict(index_to_user)
