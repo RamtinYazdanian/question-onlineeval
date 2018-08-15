@@ -57,6 +57,8 @@ def main():
         current_content = json.load(open(os.path.join(input_dir, response_filename), mode='r'))
         current_username = current_content['username']
         if current_username in users_to_discard:
+            print('Discarding username:')
+            print(current_username)
             continue
         if resulting_users.get(current_username, None) is not None:
             print('Repeated user: ' + current_username)
