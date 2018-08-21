@@ -30,15 +30,26 @@ def main():
                 "Args:\n" \
                 "1. Input dir containing the JSON files\n" \
                 "2. Text file containing the usernames to skip.\n" \
-                "3. Output dir."
+                "3. Output dir.\n" \
+                "4. -k if you want to keep users who have provided emails, -d if you want them deleted."
 
-    if len(sys.argv) != 4:
+    if len(sys.argv) != 5:
         print(usage_str)
         return
 
     input_dir = sys.argv[1]
     discard_file = sys.argv[2]
     output_dir = sys.argv[3]
+    in_keep_delete_emails = sys.argv[4]
+
+    if in_keep_delete_emails not in ['-k', '-d']:
+        print(usage_str)
+        return
+
+    if in_keep_delete_emails == '-k':
+        keep_emails = True
+    else:
+        keep_emails = False
 
     users_to_discard = open(discard_file, mode='r').readlines()
     users_to_discard = {y for y in [x.strip() for x in users_to_discard] if y != ''}
@@ -56,11 +67,18 @@ def main():
             print('Discarding username:')
             print(current_username)
             continue
+        if current_username.find('@') != -1:
+            n_users_with_emails += 1
+            if not keep_emails:
+                print('Skipping user with email address instead of username:')
+                print(current_username)
+                continue
+            else:
+                print('User with email kept:')
+                print(current_username)
         if resulting_users.get(current_username, None) is not None:
             print('Repeated user: ' + current_username)
             print('Keeping latest response')
-        if current_username.find('@') != -1:
-            n_users_with_emails += 1
         resulting_users[current_username] = current_content
         n_q = len(current_content['answers'])
 
@@ -135,13 +153,13 @@ def main():
                             for i in user_to_matches_dict}
 
     make_sure_path_exists(output_dir)
-    with open(os.path.join(output_dir, 'random_matches.json'), mode='w') as f:
+    with open(os.path.join(output_dir, 'random_matches_'+in_keep_delete_emails[1]+'.json'), mode='w') as f:
         json.dump(random_match_names, f)
 
-    with open(os.path.join(output_dir, 'q_based_matches.json'), mode='w') as f:
+    with open(os.path.join(output_dir, 'q_based_matches_'+in_keep_delete_emails[1]+'.json'), mode='w') as f:
         json.dump(q_based_match_names, f)
 
-    with open(os.path.join(output_dir, 'user_to_matches.json'), mode='w') as f:
+    with open(os.path.join(output_dir, 'user_to_matches_'+in_keep_delete_emails[1]+'.json'), mode='w') as f:
         json.dump(user_to_matches_dict, f)
 
 if __name__ == '__main__':
