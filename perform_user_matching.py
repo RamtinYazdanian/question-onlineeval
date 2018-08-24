@@ -67,7 +67,7 @@ def main():
             print('Discarding username:')
             print(current_username)
             continue
-        if current_username.find('@') != -1:
+        if str(current_username).find('@') != -1:
             n_users_with_emails += 1
             if not keep_emails:
                 print('Skipping user with email address instead of username:')
