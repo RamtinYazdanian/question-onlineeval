@@ -77,7 +77,7 @@ def main():
                 print('User with email kept:')
                 print(current_username)
         if resulting_users.get(current_username, None) is not None:
-            print('Repeated user: ' + current_username)
+            print('Repeated user: ' + str(current_username))
             print('Keeping latest response')
         resulting_users[current_username] = current_content
         n_q = len(current_content['answers'])
