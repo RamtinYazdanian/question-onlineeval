@@ -52,7 +52,7 @@ def main():
         keep_emails = False
 
     users_to_discard = open(discard_file, mode='r').readlines()
-    users_to_discard = {y.encode('utf8') for y in [x.strip() for x in users_to_discard] if y != ''}
+    users_to_discard = {y for y in [x.strip() for x in users_to_discard] if y != ''}
 
     resulting_users = dict()
     files_list = os.listdir(input_dir)
@@ -62,7 +62,7 @@ def main():
     n_users_with_emails = 0
     for response_filename in files_list:
         current_content = json.load(open(os.path.join(input_dir, response_filename), mode='r'))
-        current_username = current_content['username'].strip().encode('utf8')
+        current_username = current_content['username'].strip()
         if current_username in users_to_discard:
             print('Discarding username:')
             print(current_username)
