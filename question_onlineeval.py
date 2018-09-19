@@ -17,8 +17,7 @@ def q_form():
     question_mode = '1'
     questions = json.load(open(settings['modes'][question_mode]['questions'], mode='r'))
     questions = {str(k):questions[str(k)] for k in range(n_q)}
-    word_clouds = json.load(open(settings['modes'][question_mode]['word_cloud'], mode='r'))
-    resp = make_response(render_template('questions_form.html', questions = questions, word_clouds = word_clouds, n_q = n_q, cloud_dir = settings['modes'][question_mode]['cloud_dir']))
+    resp = make_response(render_template('questions_form.html', questions = questions, n_q = n_q, cloud_dir = settings['modes'][question_mode]['cloud_dir']))
     resp.set_cookie('question_mode', question_mode)
     return resp
 
