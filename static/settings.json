@@ -1,1 +1,1 @@
-{"n_q":20, "modes":{"1":{"questions":"static/joint/questions.json", "cloud_dir":"static/joint/clouds/", "word_cloud":"static/joint/word_cloud.json", "mode_name":"joint"}}, "output_dir":"results/"}
+{"n_q":20, "answer_levels":7, "modes":{"1":{"questions":"static/joint/questions.json", "cloud_dir":"static/joint/clouds/", "word_cloud":"static/joint/word_cloud.json", "mode_name":"joint"}}, "output_dir":"results/"}

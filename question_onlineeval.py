@@ -4,7 +4,7 @@ import pickle
 import os
 import sys
 import numpy as np
-from common_utils import make_sure_path_exists
+from common_utils import *
 import random
 from datetime import datetime
 
@@ -22,92 +22,101 @@ def q_form():
     return resp
 
 
-# @app.route('/result', methods=['POST'])
-# def recom_result():
-#     if request.method == 'POST':
-#         settings = json.load(open('static/settings.json', mode='r'))
-#         recom_count = settings['recom_count']
-#         editor_count = settings['editor_count']
-#         result = request.form
-#         question_mode = request.cookies.get('question_mode')
-#         print(result)
-#         answers = {int(x.strip('u').strip('\'').strip('group')):int(result[x].strip('u').strip('\'')) for x in result}
-#
-#         answers_standard = {}
-#         for x in answers:
-#             if answers[x] in {-1,0,1}:
-#                 answers_standard[x] = answers[x]
-#             else:
-#                 answers_standard[x] = 0
-#
-#         doc_latent_filename = settings['modes'][question_mode]['doc_latent']
-#         centroids_filename = settings['modes'][question_mode]['centroids']
-#
-#
-#         if sys.version_info[0] < 3:
-#             question_centroids = pickle.load(open(centroids_filename, mode='rb'))
-#             doc_latent = pickle.load(open(doc_latent_filename, mode='rb'))
-#         else:
-#             question_centroids = pickle.load(open(centroids_filename, mode='rb'), encoding='latin1')
-#             doc_latent = pickle.load(open(doc_latent_filename, mode='rb'), encoding='latin1')
-#
-#         answer_rows = []
-#         for x in answers_standard:
-#             if (answers_standard[x] == 1):
-#                 answer_rows.append(2*x)
-#             elif (answers_standard[x] == -1):
-#                 answer_rows.append(2*x+1)
-#
-#         this_user_latent_profile = np.zeros((question_centroids.shape[1]))
-#         if (len(answer_rows) > 0):
-#             this_user_latent_profile += np.mean(question_centroids[answer_rows, :],axis=0)
-#
-#         # This line lets us work with cosines instead of regular dot product
-#         doc_latent /= np.linalg.norm(doc_latent, axis=1).reshape((doc_latent.shape[0],1))
-#
-#         doc_dot_products = (doc_latent.dot(
-#                     np.reshape(this_user_latent_profile, (this_user_latent_profile.size,1)))).flatten()
-#
-#         doc_index_to_index = json.load(open('static/doc_index_index.json', mode='r'))
-#         doc_index_to_index = {int(k):int(doc_index_to_index[k]) for k in doc_index_to_index}
-#         best_docs = np.argsort(doc_dot_products)
-#         best_docs = best_docs[::-1]
-#         best_docs = [doc_index_to_index[x] for x in best_docs]
-#         doc_id_to_index = json.load(open('static/doc_id_index.json'))
-#         doc_index_to_id = {int(doc_id_to_index[x]):int(x) for x in doc_id_to_index}
-#         doc_id_to_name = json.load(open('static/docid_docname.json', mode='r'))
-#         doc_id_to_name = {int(x):doc_id_to_name[x] for x in doc_id_to_name}
-#         user_id_to_username = json.load(open('static/userid_username.json', mode='r'))
-#         user_id_to_username = {int(x):user_id_to_username[x] for x in user_id_to_username}
-#         docs_fervent_editors = json.load(open('static/docs_fervent_editors.json', mode='r'))
-#         docs_fervent_editors = {int(x):docs_fervent_editors[x] for x in docs_fervent_editors}
-#
-#         recommendations = {}
-#         recoms_so_far = 0
-#         best_docs_counter = -1
-#         documents_to_avoid = pickle.load(open(settings['modes'][question_mode]['question_doc_ids'], mode='rb'))
-#         #documents_to_avoid = {}
-#         while recoms_so_far < recom_count:
-#             best_docs_counter += 1
-#             #Now we need to make sure to only recommend documents that were not present in the questions.
-#             if (doc_index_to_id[best_docs[best_docs_counter]] in documents_to_avoid):
-#                 continue
-#             current_recom = {}
-#             current_id = doc_index_to_id[best_docs[best_docs_counter]]
-#             current_recom['id'] = current_id
-#             print(current_id)
-#             print(doc_id_to_name[current_id])
-#             current_recom['name'] = doc_id_to_name[current_id]
-#             doc_fervent_editor_count = min([len(docs_fervent_editors[best_docs[best_docs_counter]]), editor_count])
-#             current_recom['fervent_editors'] = [user_id_to_username[int(x)] for x in
-#                                                 docs_fervent_editors[best_docs[best_docs_counter]][:doc_fervent_editor_count]]
-#             recommendations[recoms_so_far] = current_recom
-#             recoms_so_far += 1
-#
-#         resp = make_response(render_template("recom_results.html", recommendations = recommendations))
-#         resp.set_cookie('answers', json.dumps(answers))
-#         resp.set_cookie('question_mode', question_mode)
-#         return resp
+@app.route('/result', methods=['POST'])
+def recom_result():
+    if request.method == 'POST':
+        settings = json.load(open('static/settings.json', mode='r'))
+        recom_count = settings['recom_count']
+        n_q = settings['n_q']
+        answer_levels = settings['answer_levels']
+        max_answer = (answer_levels - 1)/2
+        #editor_count = settings['editor_count']
+        result = request.form
+        question_mode = request.cookies.get('question_mode')
+        print(result)
+        answers = {int(x.strip('u').strip('\'').strip('q_group_')):int(result[x].strip('u').strip('\''))
+                                                                    for x in result if 'q_group_' in x}
+        user_name = result['name_field']
+
+        answers_vector = np.zeros((n_q, 1))
+        for x in answers:
+            answers_vector[x, 0] = 1.0*answers[x] / max_answer
+        print(answers_vector)
+
+        doc_latent_filename = settings['modes'][question_mode]['doc_latent']
+
+        if sys.version_info[0] < 3:
+            doc_latent = pickle.load(open(doc_latent_filename, mode='rb'))
+        else:
+            doc_latent = pickle.load(open(doc_latent_filename, mode='rb'), encoding='latin1')
+
+        # The assumption is that the doc_latent file is already column-normalised and has n_q columns.
+        # Here, we calculate the dot product of the topic matrix and the answer vector, resulting in the
+        # document-space representation of the user. Then, we sort it in descending order to get the highest-weighted
+        # documents.
+        doc_scores = (doc_latent.dot(answers_vector)).flatten()
+        best_docs = np.argsort(doc_scores)
+        best_docs = best_docs[::-1]
+
+        # The dictionaries needed for pretty much every set of documents
+        doc_id_to_index = json.load(open('static/doc_id_index.json'))
+        doc_index_to_id = {int(doc_id_to_index[x]):int(x) for x in doc_id_to_index}
+        doc_id_to_name = json.load(open('static/docid_docname.json', mode='r'))
+        doc_id_to_name = {int(x):doc_id_to_name[x] for x in doc_id_to_name}
+
+        # The set (as in Python 'set') of documents that appear in the questions and should be avoided in the
+        # recommendations.
+
+        # TODO: remove 'modes' from the settings.json file
+        documents_to_avoid = pickle.load(open(settings['question_doc_ids'], mode='rb'))
+
+        # Both of the following lists are assumed to be lists of ids of top-ranking documents (in each one's
+        # respective department).
+        edit_pop_list = pickle.load(open(settings['edit_pop_list'], mode='rb'), encoding='latin1')
+        view_pop_list = pickle.load(open(settings['view_pop_list'], mode='rb'), encoding='latin1')
+
+        q_based_recommendations = get_top_k_recommendations_by_id(best_docs, recom_count, doc_id_to_name,
+                                                                  documents_to_avoid, doc_index_to_id=doc_index_to_id,
+                                                                  randomise=-1)
+        # Need to shuffle this one because it's not randomised. The viewpop and editpop recoms are already randomised
+        # so we don't shuffle them.
+        random.shuffle(q_based_recommendations)
+
+        edit_pop_recommendations = get_top_k_recommendations_by_id(edit_pop_list, recom_count, doc_id_to_name,
+                                                                   documents_to_avoid, doc_index_to_id=None,
+                                                                   randomise=100)
+
+        view_pop_recommendations = get_top_k_recommendations_by_id(view_pop_list, recom_count, doc_id_to_name,
+                                                                   documents_to_avoid, doc_index_to_id=None,
+                                                                   randomise=100)
+
+        # TODO calculating the personal CF recommendations and saving them in a file (won't be done here though)
+        all_cf_personal_recommendations = json.load(open(settings['cf_recoms'], mode='rb'), encoding='latin1')
+        if user_name in all_cf_personal_recommendations:
+            cf_personal_recoms = get_top_k_recommendations_by_id(all_cf_personal_recommendations[user_name],
+                                                                 recom_count, doc_id_to_name, documents_to_avoid,
+                                                                 doc_index_to_id=None, randomise=100)
+            random.shuffle(cf_personal_recoms)
+        else:
+            cf_personal_recoms = None
+
+        final_recoms = dict()
+
+        for i in range(recom_count):
+            if cf_personal_recoms is not None:
+                final_recoms[i] = {'q_based': q_based_recommendations[i],
+                                   'view_pop': view_pop_recommendations[i],
+                                   'edit_pop': edit_pop_recommendations[i],
+                                   'cf_based': cf_personal_recoms[i]}
+            else:
+                final_recoms[i] = {'q_based': q_based_recommendations[i],
+                                   'view_pop': view_pop_recommendations[i],
+                                   'edit_pop': edit_pop_recommendations[i]}
+
+        resp = make_response(render_template("recom_results.html", recoms_dict = final_recoms))
+        resp.set_cookie('answers', json.dumps(answers))
+        resp.set_cookie('question_mode', question_mode)
+        return resp
 
 
 # @app.route('/thankyou', methods=['POST'])
