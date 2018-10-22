@@ -58,7 +58,7 @@
       <div class="container">
         <div class="row">
           <div class="col-10 mx-auto">
-                    <form name="questionnaire" action = "/thankyou" method = "POST" onsubmit="if (!is_complete()){event.preventDefault();}">
+                    <form name="questionnaire" action = "/thankyou" method = "POST" onsubmit="submission_check_survey();">
                         {% for key in range(n_q) %}
 
                             <div id="group{{ key }}" class="frmdiv">
@@ -101,15 +101,21 @@
 
                                 <div class="mx-auto">
                                     <h4>Your answer:</h4>
-                                        <input type="radio" id="r{{ key }}1" value="3" name="q_group_{{ key }}"><label for="r{{ key }}1">I greatly prefer set A.</label>
-                                        <input type="radio" id="r{{ key }}2" value="2" name="q_group_{{ key }}"><label for="r{{ key }}2">I moderately prefer set A.</label>
-                                        <input type="radio" id="r{{ key }}3" value="1" name="q_group_{{ key }}"><label for="r{{ key }}3">I slightly prefer set A.</label>
-                                        <input type="radio" id="r{{ key }}4" value="0" name="q_group_{{ key }}"><label for="r{{ key }}4">I am indifferent towards the two sets.</label>
-                                        <input type="radio" id="r{{ key }}5" value="-1" name="q_group_{{ key }}"><label for="r{{ key }}5">I slightly prefer set B.</label>
-                                        <input type="radio" id="r{{ key }}6" value="-2" name="q_group_{{ key }}"><label for="r{{ key }}6">I moderately prefer set B.</label>
-                                        <input type="radio" id="r{{ key }}7" value="-3" name="q_group_{{ key }}"><label for="r{{ key }}7">I greatly prefer set B.</label>
+                                        <input type="radio" id="r{{ key }}1" value="3" name="q_group_{{ key }}"><label for="r{{ key }}1">I greatly prefer set A.</label><br>
+                                        <input type="radio" id="r{{ key }}2" value="2" name="q_group_{{ key }}"><label for="r{{ key }}2">I moderately prefer set A.</label><br>
+                                        <input type="radio" id="r{{ key }}3" value="1" name="q_group_{{ key }}"><label for="r{{ key }}3">I slightly prefer set A.</label><br>
+                                        <input type="radio" id="r{{ key }}4" value="0" name="q_group_{{ key }}"><label for="r{{ key }}4">I am indifferent towards the two sets.</label><br>
+                                        <input type="radio" id="r{{ key }}5" value="-1" name="q_group_{{ key }}"><label for="r{{ key }}5">I slightly prefer set B.</label><br>
+                                        <input type="radio" id="r{{ key }}6" value="-2" name="q_group_{{ key }}"><label for="r{{ key }}6">I moderately prefer set B.</label><br>
+                                        <input type="radio" id="r{{ key }}7" value="-3" name="q_group_{{ key }}"><label for="r{{ key }}7">I greatly prefer set B.</label><br>
 
                                 </div>
+                                {% if key == n_q - 1 %}
+                                    <div class="mx-auto">
+                                        <h4 style="color: orangered">Before you submit the questionnaire...</h4>
+                                        <input class="form-text" type="text" name="name_field" id="name_field" placeholder="Please enter your Wikipedia username here."/>
+                                    </div><br>
+                                {% endif %}
                                 <div class="form-group">
                                     <div class="col-lg-10 col-lg-offset-3">
 
@@ -123,7 +129,6 @@
                                             <button class="btn btn-dark" id="tolast{{ key }}" type="button"><span class="fa fa-arrow-left"></span> To last</button>
                                         {% else %}
                                             <input class="btn btn-primary" id="next{{ key }}" type = "submit" value = "Submit"/>
-                                            <input class="form-text" type="text" name="name_field" id="name_field" placeholder="Please enter your Wikipedia username here."/>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -181,6 +186,13 @@
     $("input[placeholder]").each(function () {
         $(this).attr('size', $(this).attr('placeholder').length);
     });
+
+    function submission_check_survey() {
+        if (!is_radio_group_complete('q_group_', {{ n_q }}) || !name_entered())
+        {
+            event.preventDefault();
+        }
+    }
 
 </script>
 {% endblock %}

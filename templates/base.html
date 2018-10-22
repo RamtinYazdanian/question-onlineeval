@@ -58,13 +58,11 @@
 <script src="../static/js/scrolling-nav.js"></script>
 
 <script type="text/javascript">
-        function is_complete()
+        function is_radio_group_complete(groupname, n_questions)
         {
-          var n_questions;
-          var x, i, j;
-          n_questions = {{ n_q }};
-          for (i=0;i<n_questions;i++) {
-              x = document.getElementsByName("group"+i);
+            var x, i, j;
+            for (i=0;i<n_questions;i++) {
+              x = document.getElementsByName(groupname+i);
               var rad, complete;
               complete = false;
               for (j=0;j<x.length;j++){
@@ -75,26 +73,59 @@
                   }
               }
               if (!complete) {
-                  alert("At least one question unanswered. Please fill the questionnaire completely. :)");
+                  alert("At least one question unanswered. Please answer the questionnaire completely.");
                   return false;
               }
-          }
-          if (document.getElementById("name_field") != null){
-              var username_val = document.getElementById("name_field").value;
-              if (username_val == ""){
-                  alert("Please enter your username!");
+            }
+            return true;
+        }
+
+        function is_text_group_complete(groupname, n_questions){
+            var x, i, j;
+            for (i=0;i<n_questions;i++) {
+              x = document.getElementsByName(groupname+i);
+              var textfield, complete;
+              complete = true;
+              for (j=0;j<x.length;j++){
+                  textfield = x[j];
+                  if (textfield.value === ""){
+                      complete = false;
+                      break;
+                  }
+              }
+              if (!complete) {
+                  alert("At least one question unanswered. Please answer the questionnaire completely.");
                   return false;
               }
-              //var emailFilter = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-              //if (!emailFilter.test(email_address)){
-              //    alert("Please enter a valid e-mail address.");
-              //    return false;
-              //}
-          }
-          else{
-              return false;
-          }
-          return true;
+            }
+            return true;
+        }
+
+        function name_entered() {
+            if (document.getElementById("name_field") != null) {
+                var username_val = document.getElementById("name_field").value;
+                if (username_val === "") {
+                    alert("Please enter your Wikipedia username!");
+                    return false;
+                }
+                //var emailFilter = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+                //if (!emailFilter.test(email_address)){
+                //    alert("Please enter a valid e-mail address.");
+                //    return false;
+                //}
+            }
+            return true;
+        }
+
+        function single_text_field_complete(field_name, field_title) {
+            if (document.getElementById(field_name) != null) {
+                var field_val = document.getElementById(field_name).value;
+                if (field_val === "") {
+                    alert("The field \'"+field_title+"\' needs to be filled!");
+                    return false;
+                }
+            }
+            return true;
         }
 </script>
 
