@@ -1,1 +1,6 @@
-{"n_q":20, "answer_levels":7, "modes":{"1":{"questions":"static/joint/questions.json", "cloud_dir":"static/joint/clouds/", "word_cloud":"static/joint/word_cloud.json", "mode_name":"joint"}}, "output_dir":"results/"}
+{"n_q":1, "answer_levels":7, "recom_count": 10, "questions":"static/joint/questions.json",
+  "edit_pop_list":"static/joint/edit_pop_list.pkl", "view_pop_list":"static/joint/view_pop_list.json",
+  "doc_latent":"static/joint/doc_latent.pkl", "cloud_dir":"static/joint/clouds/",
+  "word_cloud":"static/joint/word_cloud.json", "output_dir":"results/",
+  "question_doc_ids":"static/joint/id_avoid_list.pkl", "question_doc_names":"static/joint/name_avoid_list.pkl"
+}

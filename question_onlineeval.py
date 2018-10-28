@@ -14,11 +14,10 @@ app = Flask(__name__, static_folder='static')
 def q_form():
     settings = json.load(open('static/settings.json', mode='r'))
     n_q = settings['n_q']
-    question_mode = '1'
-    questions = json.load(open(settings['modes'][question_mode]['questions'], mode='r'))
+    questions = json.load(open(settings['questions'], mode='r'))
     questions = {str(k):questions[str(k)] for k in range(n_q)}
-    resp = make_response(render_template('questions_form.html', questions = questions, n_q = n_q, cloud_dir = settings['modes'][question_mode]['cloud_dir']))
-    resp.set_cookie('question_mode', question_mode)
+    resp = make_response(render_template('questions_form.html', questions = questions, n_q = n_q, cloud_dir = settings['cloud_dir']))
+    resp.set_cookie('n_q', n_q)
     return resp
 
 
@@ -27,12 +26,11 @@ def recom_result():
     if request.method == 'POST':
         settings = json.load(open('static/settings.json', mode='r'))
         recom_count = settings['recom_count']
-        n_q = settings['n_q']
+        n_q = int(request.cookies.get('n_q'))
         answer_levels = settings['answer_levels']
         max_answer = (answer_levels - 1)/2
-        #editor_count = settings['editor_count']
+
         result = request.form
-        question_mode = request.cookies.get('question_mode')
         print(result)
         answers = {int(x.strip('u').strip('\'').strip('q_group_')):int(result[x].strip('u').strip('\''))
                                                                     for x in result if 'q_group_' in x}
@@ -43,7 +41,7 @@ def recom_result():
             answers_vector[x, 0] = 1.0*answers[x] / max_answer
         print(answers_vector)
 
-        doc_latent_filename = settings['modes'][question_mode]['doc_latent']
+        doc_latent_filename = settings['doc_latent']
 
         if sys.version_info[0] < 3:
             doc_latent = pickle.load(open(doc_latent_filename, mode='rb'))
@@ -67,17 +65,21 @@ def recom_result():
         # The set (as in Python 'set') of documents that appear in the questions and should be avoided in the
         # recommendations.
 
-        # TODO: remove 'modes' from the settings.json file
         documents_to_avoid = pickle.load(open(settings['question_doc_ids'], mode='rb'))
+        doc_names_to_avoid = pickle.load(open(settings['question_doc_names'], mode='rb'))
 
         # Both of the following lists are assumed to be lists of ids of top-ranking documents (in each one's
         # respective department).
-        edit_pop_list = pickle.load(open(settings['edit_pop_list'], mode='rb'), encoding='latin1')
-        view_pop_list = pickle.load(open(settings['view_pop_list'], mode='rb'), encoding='latin1')
+        edit_pop_file = settings['edit_pop_list']
+        edit_pop_list = pickle.load(open(edit_pop_file, mode='rb'), encoding='latin1')
+        view_pop_file = settings['view_pop_list']
+        view_pop_list = json.load(open(view_pop_file, mode='r'))
+
 
         q_based_recommendations = get_top_k_recommendations_by_id(best_docs, recom_count, doc_id_to_name,
                                                                   documents_to_avoid, doc_index_to_id=doc_index_to_id,
                                                                   randomise=-1)
+        q_based_recommendations = [x['name'] for x in q_based_recommendations]
         # Need to shuffle this one because it's not randomised. The viewpop and editpop recoms are already randomised
         # so we don't shuffle them.
         random.shuffle(q_based_recommendations)
@@ -86,93 +88,105 @@ def recom_result():
                                                                    documents_to_avoid, doc_index_to_id=None,
                                                                    randomise=100)
 
-        view_pop_recommendations = get_top_k_recommendations_by_id(view_pop_list, recom_count, doc_id_to_name,
-                                                                   documents_to_avoid, doc_index_to_id=None,
-                                                                   randomise=100)
+        view_pop_recommendations = get_view_pop_recoms(view_pop_list, recom_count, doc_names_to_avoid)
 
-        # TODO calculating the personal CF recommendations and saving them in a file (won't be done here though)
-        all_cf_personal_recommendations = json.load(open(settings['cf_recoms'], mode='rb'), encoding='latin1')
-        if user_name in all_cf_personal_recommendations:
-            cf_personal_recoms = get_top_k_recommendations_by_id(all_cf_personal_recommendations[user_name],
-                                                                 recom_count, doc_id_to_name, documents_to_avoid,
-                                                                 doc_index_to_id=None, randomise=100)
-            random.shuffle(cf_personal_recoms)
+        if settings.get('cf_recoms', None) is not None:
+            all_cf_personal_recommendations = json.load(open(settings['cf_recoms'], mode='rb'), encoding='latin1')
+            if user_name in all_cf_personal_recommendations:
+                cf_personal_recoms = get_top_k_recommendations_by_id(all_cf_personal_recommendations[user_name],
+                                                                     recom_count, doc_id_to_name, documents_to_avoid,
+                                                                     doc_index_to_id=None, randomise=100)
+                random.shuffle(cf_personal_recoms)
+                recom_type_count = 4
+            else:
+                cf_personal_recoms = None
+                recom_type_count = 3
         else:
             cf_personal_recoms = None
+            recom_type_count = 3
 
         final_recoms = dict()
+        recom_field_names = dict()
 
         for i in range(recom_count):
             if cf_personal_recoms is not None:
-                final_recoms[i] = {'q_based': q_based_recommendations[i],
-                                   'view_pop': view_pop_recommendations[i],
-                                   'edit_pop': edit_pop_recommendations[i],
-                                   'cf_based': cf_personal_recoms[i]}
+                final_recoms[i] = {0: q_based_recommendations[i],
+                                   1: view_pop_recommendations[i],
+                                   2: edit_pop_recommendations[i],
+                                   3: cf_personal_recoms[i]}
+                recom_field_names = {0: 'q_based', 1 :'view_pop', 2: 'edit_pop', 3: 'cf_based'}
             else:
-                final_recoms[i] = {'q_based': q_based_recommendations[i],
-                                   'view_pop': view_pop_recommendations[i],
-                                   'edit_pop': edit_pop_recommendations[i]}
+                final_recoms[i] = {0: q_based_recommendations[i],
+                                   1: view_pop_recommendations[i],
+                                   2: edit_pop_recommendations[i]}
+                recom_field_names = {0: 'q_based', 1: 'view_pop', 2: 'edit_pop'}
 
-        resp = make_response(render_template("recom_results.html", recoms_dict = final_recoms))
+
+        resp = make_response(render_template("recom_results.html", recoms_dict = final_recoms, recom_count=recom_count,
+                                                        field_names = recom_field_names, type_count = recom_type_count))
         resp.set_cookie('answers', json.dumps(answers))
-        resp.set_cookie('question_mode', question_mode)
+        resp.set_cookie('name_field', user_name)
+        resp.set_cookie('type_count', str(recom_type_count))
+        resp.set_cookie('n_q', n_q)
+
         return resp
 
-
-# @app.route('/thankyou', methods=['POST'])
-# def thank_you_page():
-#     if request.method == 'POST':
-#         #Saving the results
-#         settings = json.load(open('static/settings.json', mode='r'))
-#         answers = request.cookies.get('answers')
-#         question_mode = request.cookies.get('question_mode')
-#         user_eval = request.form
-#         user_eval = {int(x.strip('u').strip('\'').strip('group')):int(user_eval[x].strip('u').strip('\'')) for x in user_eval}
-#
-#         print(answers)
-#         print(question_mode)
-#         print(user_eval)
-#
-#         result_to_save = {}
-#         result_to_save['user_eval'] = user_eval
-#         result_to_save['question_mode'] = question_mode
-#         result_to_save['question_mode_name'] = settings['modes'][question_mode]['mode_name']
-#         result_to_save['answers'] = answers
-#
-#         output_filename = str(datetime.now())
-#         output_filename = output_filename.replace(' ', '_').replace(':','_').replace('.','_').replace('-','_')
-#         output_filename = output_filename + '_' + str(random.randint(0,20000))
-#         json.dump(result_to_save, open(settings['output_dir']+output_filename+'.json', mode='w'))
-#
-#         return render_template('thanks.html')
 
 @app.route('/thankyou', methods=['POST'])
 def thank_you_page():
     if request.method == 'POST':
+        #Saving the results
         settings = json.load(open('static/settings.json', mode='r'))
-        result = request.form
-        question_mode = request.cookies.get('question_mode')
-        user_name = result['name_field']
-        result = {x:result[x] for x in result if x != 'name_field'}
-        answers = {int(x.strip('u').strip('\'').strip('group')):int(result[x].strip('u').strip('\'')) for x in result}
+        answers = request.cookies.get('answers')
+        user_name = request.cookies.get('name_field')
+        recom_type_count = request.cookies.get('type_count')
+        n_q = request.cookies.get('n_q')
+        user_feedback = request.form
 
         print(answers)
-        print(question_mode)
+        print(user_feedback)
 
-        result_to_save = {}
-        result_to_save['question_mode'] = question_mode
-        result_to_save['question_mode_name'] = settings['modes'][question_mode]['mode_name']
-        result_to_save['answers'] = answers
-        result_to_save['username'] = user_name
+        results_to_save_dict = user_feedback.to_dict(flat=True)
+        results_to_save_dict['answers'] = answers
+        results_to_save_dict['name_field'] = user_name
+        results_to_save_dict['recom_count'] = settings['recom_count']
+        results_to_save_dict['type_count'] = recom_type_count
+        results_to_save_dict['n_q'] = n_q
 
         output_filename = str(datetime.now())
         output_filename = output_filename.replace(' ', '_').replace(':','_').replace('.','_').replace('-','_')
         output_filename = output_filename + '_' + str(random.randint(0,200000))
-
-        make_sure_path_exists(settings['output_dir'])
-        json.dump(result_to_save, open(settings['output_dir']+output_filename+'.json', mode='w'))
+        json.dump(results_to_save_dict, open(settings['output_dir']+output_filename+'.json', mode='w'))
 
         return render_template('thanks.html')
+
+# @app.route('/thankyou', methods=['POST'])
+# def thank_you_page():
+#     if request.method == 'POST':
+#         settings = json.load(open('static/settings.json', mode='r'))
+#         result = request.form
+#         question_mode = request.cookies.get('question_mode')
+#         user_name = result['name_field']
+#         result = {x:result[x] for x in result if x != 'name_field'}
+#         answers = {int(x.strip('u').strip('\'').strip('group')):int(result[x].strip('u').strip('\'')) for x in result}
+#
+#         print(answers)
+#         print(question_mode)
+#
+#         result_to_save = {}
+#         result_to_save['question_mode'] = question_mode
+#         result_to_save['question_mode_name'] = settings['modes'][question_mode]['mode_name']
+#         result_to_save['answers'] = answers
+#         result_to_save['username'] = user_name
+#
+#         output_filename = str(datetime.now())
+#         output_filename = output_filename.replace(' ', '_').replace(':','_').replace('.','_').replace('-','_')
+#         output_filename = output_filename + '_' + str(random.randint(0,200000))
+#
+#         make_sure_path_exists(settings['output_dir'])
+#         json.dump(result_to_save, open(settings['output_dir']+output_filename+'.json', mode='w'))
+#
+#         return render_template('thanks.html')
 
 
 if __name__ == '__main__':
