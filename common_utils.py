@@ -1,6 +1,7 @@
 import os
 import errno
 from random import shuffle, sample
+import re
 
 def make_sure_path_exists(path):
     try:
@@ -65,9 +66,19 @@ def get_top_k_recommendations_by_id(best_docs, recom_count, doc_id_to_name, docu
     return recom_results
 
 def get_view_pop_recoms(view_pop_list, recom_count, documents_to_avoid=None):
-    articles_list = [str(x['article']) for x in view_pop_list['items'][0]['articles']]
-    articles_list = [x.replace('_', ' ') for x in articles_list]
+    regexp = re.compile(r'(.+)(:)[^_]+.*')
+    articles_list = [str(x['article'].encode('utf8')) for x in view_pop_list['items'][0]['articles']]
+    articles_list = [x.replace('_', ' ') for x in articles_list
+                     if not re.search(regexp, x)]
     if documents_to_avoid is not None:
         articles_list = [x for x in articles_list if x not in documents_to_avoid]
     result_list = sample(articles_list, recom_count)
     return result_list
+
+def get_edit_pop_recoms(edit_pop_data, recom_count):
+    regexp = re.compile(r'(.+)(:)[^_]+.*')
+    articles_list = [str(x.split(',')[0].encode('utf8')) for x in edit_pop_data[1:]]
+    articles_list = [x.replace('_', ' ') for x in articles_list if not re.search(regexp, x)]
+    result_list = sample(articles_list, recom_count)
+    return result_list
+
