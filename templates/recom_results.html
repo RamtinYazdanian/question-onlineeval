@@ -16,7 +16,8 @@
 <header class="bg-primary text-white">
       <div class="container text-center">
         <h1>Your recommendations are here!</h1>
-        <p class="lead">Please rate them from 1 to 5 (very bad to very good).</p>
+        <p class="lead">We have generated several sets of recommendations for you,
+            and now we would like to ask that you to provide us with feedback on them.</p>
       </div>
 </header>
 
@@ -24,13 +25,12 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 mx-auto">
-                A few tips: <br>
-                <ul>
-                    <li>The document are shown below their names so you can take a peek.</li>
-                    <li>For each document, we have also listed some of their most frequent editors. If you are interested
-                    in editing the article, you could try getting in touch with these veterans and forming groups.</li>
-                    <li>Once you've rated them all, please press the submit button.</li>
-                </ul>
+                Now that we've generated recommendations for you, we'll be asking you {{ pairwise_comparison_count }} questions,
+                in each of which we present two lists of articles that we recommend to you.
+                The feedback we would like to ask you to give us, is to compare each pair of lists,
+                and tell us which list in the pair you would be more interested in editing or in reading.<br>
+                Once you have answered all the questions, press the submit button to send us your feedback. Thank you for
+                helping us make Wikipedia more welcoming!
             </div>
         </div>
     </div>
@@ -42,44 +42,100 @@
           <div class="col-lg-12 mx-auto">
 
                     <form name="feedback" action = "/thankyou" method = "POST">
-                        {% for recom_number in range(recom_count) %}
+                        {% for comparison_number in range(pairwise_comparison_count) %}
                             {# We get the dictionary of articles for this recommendation (the 4-tuple or 3-tuple) #}
-                            {% set current_recom_list = recoms_dict[recom_number] %}
-                            <div id="group_{{ recom_number }}" class="frmdiv">
+                            {% set current_pair_indices = comparison_pairs[comparison_number] %}
+                            {% set recom_list_A = recoms_dict[current_pair_indices[0]] %}
+                            {% set recom_list_B = recoms_dict[current_pair_indices[1]] %}
+                            <div id="group_{{ comparison_number }}" class="frmdiv">
                                 <fieldset>
-                                    <b>Recommendation #{{ recom_number + 1 }}</b>
-                                        {# Now we go through the indices of articles in this dictionary #}
+                                    <b>Comparison #{{ comparison_number + 1 }}: Please look at the two lists of recommendations below, and answer the questions that follow:</b>
                                         <div class="row">
-                                            {% for article_index in range(type_count) %}
-                                                {# We finally take the current article #}
-                                                {% set current_article = current_recom_list[article_index] %}
-                                                <div class="col">
-                                                <h5 id="recom_{{ recom_number }}_{{ article_index }}">Document name: {{ recom_fields['name'] }}</h5>
-{#                                                    <iframe src="https://en.wikipedia.org/w/index.php?search={{ recom_fields['name'] }}&title=Special%3ASearch&go=Go" width="100%", height="300"></iframe>#}
-                                                </div>
-                                            {% endfor %}
+                                            <div class="col left mx-auto">
+                                                <b>Recommendation list A:</b> <br>
+                                                <ul>
+                                                {% for x in recom_list_A %}
+                                                    <li><a href="https://en.wikipedia.org/wiki/{{ x }}" target="_blank">{{ x }}</a> </li>
+                                                {% endfor %}
+                                                </ul>
+                                            </div>
+                                            <div class="col right mx-auto">
+                                                <b>Recommendation list B:</b> <br>
+                                                <ul>
+                                                {% for x in recom_list_B %}
+                                                    <li><a href="https://en.wikipedia.org/wiki/{{ x }}" target="_blank">{{ x }}</a></li>
+                                                {% endfor %}
+                                                </ul>
+                                            </div>
                                         </div>
+
                                         <div class="mx-auto">
-                                        <h4>Which one of these documents would you be more interested in editing?</h4>
-                                        {% for article_index in range(type_count) %}
-                                            {% set current_article = current_recom_list[article_index] %}
-                                            <input type="radio" id="editint_{{ recom_number }}_{{ article_index }}" value="{{ article_index }}" name="edit_interest_{{ recom_number }}"><label for="editint_{{ recom_number }}_{{ article_index }}">{{ current_article }}</label>
-                                        {% endfor %}
+                                            <h4>Which one of these lists contains more articles that you would be interested in <b>reading?</b></h4>
+                                                <input type="radio" id="read{{ comparison_number }}1" value="2" name="read_group{{ comparison_number }}">
+                                                <label for="read{{ comparison_number }}1">List A, by a wide margin.</label><br>
+                                                
+                                                <input type="radio" id="read{{ comparison_number }}2" value="1" name="read_group{{ comparison_number }}">
+                                                <label for="read{{ comparison_number }}2">List A, by a narrow margin.</label><br>
+                                                
+                                                <input type="radio" id="read{{ comparison_number }}3" value="0" name="read_group{{ comparison_number }}">
+                                                <label for="read{{ comparison_number }}3">They are equal for me.</label><br>
+                                                
+                                                <input type="radio" id="read{{ comparison_number }}4" value="-1" name="read_group{{ comparison_number }}">
+                                                <label for="read{{ comparison_number }}4">List B, by a narrow margin.</label><br>
+                                                
+                                                <input type="radio" id="read{{ comparison_number }}5" value="-2" name="read_group{{ comparison_number }}">
+                                                <label for="read{{ comparison_number }}5">List B, by a wide margin.</label><br>
+                                        </div>
+                                        
+                                        <div class="mx-auto">
+                                            <h4>Which one of these lists contains more articles that you would be interested in <b>editing?</b></h4>
+                                                <input type="radio" id="edit{{ comparison_number }}1" value="2" name="edit_group{{ comparison_number }}">
+                                                <label for="edit{{ comparison_number }}1">List A, by a wide margin.</label><br>
+                                                
+                                                <input type="radio" id="edit{{ comparison_number }}2" value="1" name="edit_group{{ comparison_number }}">
+                                                <label for="edit{{ comparison_number }}2">List A, by a narrow margin.</label><br>
+                                                
+                                                <input type="radio" id="edit{{ comparison_number }}3" value="0" name="edit_group{{ comparison_number }}">
+                                                <label for="edit{{ comparison_number }}3">They are equal for me.</label><br>
+                                                
+                                                <input type="radio" id="edit{{ comparison_number }}4" value="-1" name="edit_group{{ comparison_number }}">
+                                                <label for="edit{{ comparison_number }}4">List B, by a narrow margin.</label><br>
+                                                
+                                                <input type="radio" id="edit{{ comparison_number }}5" value="-2" name="edit_group{{ comparison_number }}">
+                                                <label for="edit{{ comparison_number }}5">List B, by a wide margin.</label><br>
+                                        </div>
+
+                                        <div class="mx-auto">
+                                            <h4>Which one of these lists contains more articles that you are <b>not</b> interested in at all, neither for reading nor for editing?</h4>
+                                                <input type="radio" id="uninterested{{ comparison_number }}1" value="2" name="uninterested_group{{ comparison_number }}">
+                                                <label for="uninterested{{ comparison_number }}1">List A, by a wide margin.</label><br>
+
+                                                <input type="radio" id="uninterested{{ comparison_number }}2" value="1" name="uninterested_group{{ comparison_number }}">
+                                                <label for="uninterested{{ comparison_number }}2">List A, by a narrow margin.</label><br>
+
+                                                <input type="radio" id="uninterested{{ comparison_number }}3" value="0" name="uninterested_group{{ comparison_number }}">
+                                                <label for="uninterested{{ comparison_number }}3">They are equal for me.</label><br>
+
+                                                <input type="radio" id="uninterested{{ comparison_number }}4" value="-1" name="uninterested_group{{ comparison_number }}">
+                                                <label for="uninterested{{ comparison_number }}4">List B, by a narrow margin.</label><br>
+
+                                                <input type="radio" id="uninterested{{ comparison_number }}5" value="-2" name="uninterested_group{{ comparison_number }}">
+                                                <label for="uninterested{{ comparison_number }}5">List B, by a wide margin.</label><br>
                                         </div>
 
                                         <div class="form-group">
                                             <div class="col-lg-10 col-lg-offset-3">
 
-                                                {% if recom_number != 0 %}
-                                                    <button class="btn btn-dark" id="tofirst{{ recom_number }}" type="button"><span class="fa fa-arrow-left"></span> To first</button>
-                                                    <button class="btn btn-warning" id="back{{ recom_number }}" type="button"><span class="fa fa-arrow-left"></span> Back</button>
+                                                {% if comparison_number != 0 %}
+                                                    <button class="btn btn-dark" id="tofirst{{ comparison_number }}" type="button"><span class="fa fa-arrow-left"></span> To first</button>
+                                                    <button class="btn btn-warning" id="back{{ comparison_number }}" type="button"><span class="fa fa-arrow-left"></span> Back</button>
                                                 {% endif %}
 
-                                                {% if recom_number != recommendations|length - 1 %}
-                                                    <button class="btn btn-primary" id="next{{ recom_number }}" type="button">Next <span class="fa fa-arrow-right"></span></button>
-                                                    <button class="btn btn-dark" id="tolast{{ recom_number }}" type="button"><span class="fa fa-arrow-left"></span> To last</button>
+                                                {% if comparison_number != pairwise_comparison_count - 1 %}
+                                                    <button class="btn btn-primary" id="next{{ comparison_number }}" type="button">Next <span class="fa fa-arrow-right"></span></button>
+                                                    <button class="btn btn-dark" id="tolast{{ comparison_number }}" type="button"><span class="fa fa-arrow-left"></span> To last</button>
                                                 {% else %}
-                                                    <input class="btn btn-primary" id="next{{ recom_number }}" type = "submit" value = "Submit"/>
+                                                    <input class="btn btn-primary" id="next{{ comparison_number }}" type = "submit" value = "Submit"/>
                                                 {% endif %}
                                             </div>
                                         </div>
@@ -103,7 +159,7 @@
     $(document).ready(function() {
         $(".frmdiv").hide();
         $("#group0").show();
-        {% for key in recommendations %}
+        {% for key in range(pairwise_comparison_count) %}
             {%if  key != 0 %}
                 $("#back{{ key }}").click(function() {
                     $(".frmdiv").hide("fast");
@@ -116,7 +172,7 @@
                     $(document).scrollTop( $("#recoms").offset().top );
                 });
             {% endif %}
-            {% if key != recommendations|length - 1 %}
+            {% if key != pairwise_comparison_count - 1 %}
                 $("#next{{ key }}").click(function() {
                     $(".frmdiv").hide("fast");
                     $("#group{{ key + 1 }}").show("fast");
@@ -124,7 +180,7 @@
                 });
                 $("#tolast{{ key }}").click(function () {
                     $(".frmdiv").hide("fast");
-                    $("#group{{ recommendations|length - 1 }}").show("fast");
+                    $("#group{{ pairwise_comparison_count - 1 }}").show("fast");
                     $(document).scrollTop( $("#recoms").offset().top );
                 });
             {% endif %}

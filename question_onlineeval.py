@@ -59,6 +59,7 @@ def recom_result():
         # The dictionaries needed for pretty much every set of documents
         doc_id_to_index = json.load(open('static/doc_id_index.json'))
         doc_index_to_id = {int(doc_id_to_index[x]):int(x) for x in doc_id_to_index}
+        # The following file is generated using get_id_name_dict in common_utils.py of the original repo.
         doc_id_to_name = json.load(open('static/docid_docname.json', mode='r'))
         doc_id_to_name = {int(x):doc_id_to_name[x] for x in doc_id_to_name}
 
@@ -84,14 +85,12 @@ def recom_result():
         # so we don't shuffle them.
         random.shuffle(q_based_recommendations)
 
-        edit_pop_recommendations = get_top_k_recommendations_by_id(edit_pop_list, recom_count, doc_id_to_name,
-                                                                   documents_to_avoid, doc_index_to_id=None,
-                                                                   randomise=100)
+        edit_pop_recommendations = get_edit_pop_recoms(edit_pop_list, recom_count)
 
         view_pop_recommendations = get_view_pop_recoms(view_pop_list, recom_count, doc_names_to_avoid)
 
         if settings.get('cf_recoms', None) is not None:
-            all_cf_personal_recommendations = json.load(open(settings['cf_recoms'], mode='rb'), encoding='latin1')
+            all_cf_personal_recommendations = json.load(open(settings['cf_recoms'], mode='r'), encoding='latin1')
             if user_name in all_cf_personal_recommendations:
                 cf_personal_recoms = get_top_k_recommendations_by_id(all_cf_personal_recommendations[user_name],
                                                                      recom_count, doc_id_to_name, documents_to_avoid,
@@ -105,28 +104,40 @@ def recom_result():
             cf_personal_recoms = None
             recom_type_count = 3
 
-        final_recoms = dict()
-        recom_field_names = dict()
+        if cf_personal_recoms is not None:
+            recom_field_types = {0: Q_BASED_STR, 1: VIEW_POP_STR, 2: EDIT_POP_STR, 3: CF_BASED_STR}
+            final_recoms = {0: q_based_recommendations,
+                            1: view_pop_recommendations,
+                            2: edit_pop_recommendations,
+                            3: cf_personal_recoms}
+            comparison_pairs = LIST_COMPARISON_DICT_WITH_CF
+        else:
+            recom_field_types = {0: Q_BASED_STR, 1: VIEW_POP_STR, 2: EDIT_POP_STR}
+            final_recoms = {0: q_based_recommendations,
+                            1: view_pop_recommendations,
+                            2: edit_pop_recommendations}
+            comparison_pairs = LIST_COMPARISON_DICT_NO_CF
 
-        for i in range(recom_count):
-            if cf_personal_recoms is not None:
-                final_recoms[i] = {0: q_based_recommendations[i],
-                                   1: view_pop_recommendations[i],
-                                   2: edit_pop_recommendations[i],
-                                   3: cf_personal_recoms[i]}
-                recom_field_names = {0: 'q_based', 1 :'view_pop', 2: 'edit_pop', 3: 'cf_based'}
-            else:
-                final_recoms[i] = {0: q_based_recommendations[i],
-                                   1: view_pop_recommendations[i],
-                                   2: edit_pop_recommendations[i]}
-                recom_field_names = {0: 'q_based', 1: 'view_pop', 2: 'edit_pop'}
+        # Here, we convert the list of pairwise list comparisons into their actual indices in the recommendations
+        # dictionary, randomly (with a 50% chance) flip the order of lists in each pair, and the shuffle the whole
+        # list of pairs such that both the ordering of the feedback questions and the ordering of the pair within
+        # each question is randomised. We put all the information about these questions into the cookie so that
+        # we know what was what afterwards.
+
+        inverted_field_types = invert_dict(recom_field_types)
+        comparison_pairs = {x:
+                    invert_list_by_coin_flip([inverted_field_types[y] for y in comparison_pairs[x]])
+                    for x in comparison_pairs}
+        shuffler = dictionary_shuffler_creator(list(comparison_pairs.keys()))
+        comparison_pairs = shuffle_dict_using_shuffler(comparison_pairs, shuffler)
 
 
         resp = make_response(render_template("recom_results.html", recoms_dict = final_recoms, recom_count=recom_count,
-                                                        field_names = recom_field_names, type_count = recom_type_count))
+                            comparison_pairs = comparison_pairs, pairwise_comparison_count = len(comparison_pairs)))
         resp.set_cookie('answers', json.dumps(answers))
         resp.set_cookie('name_field', user_name)
-        resp.set_cookie('type_count', str(recom_type_count))
+        resp.set_cookie('recom_types', json.dumps(recom_field_types))
+        resp.set_cookie('comparison_pairs', json.dumps(comparison_pairs))
         resp.set_cookie('n_q', n_q)
 
         return resp

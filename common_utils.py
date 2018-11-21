@@ -1,7 +1,23 @@
 import os
 import errno
-from random import shuffle, sample
+from random import shuffle, sample, randint
 import re
+
+Q_BASED_STR = 'q_based'
+VIEW_POP_STR = 'view_pop'
+EDIT_POP_STR = 'edit_pop'
+CF_BASED_STR = 'cf_based'
+
+LIST_COMPARISON_DICT_WITH_CF = {0 : [Q_BASED_STR, CF_BASED_STR],
+                                1 : [Q_BASED_STR, VIEW_POP_STR],
+                                2 : [Q_BASED_STR, EDIT_POP_STR],
+                                3 : [CF_BASED_STR, VIEW_POP_STR],
+                                4 : [CF_BASED_STR, EDIT_POP_STR],
+                                5 : [EDIT_POP_STR, VIEW_POP_STR]}
+
+LIST_COMPARISON_DICT_NO_CF = {0 : [Q_BASED_STR, VIEW_POP_STR],
+                              1 : [Q_BASED_STR, EDIT_POP_STR],
+                              2 : [EDIT_POP_STR, VIEW_POP_STR]}
 
 def make_sure_path_exists(path):
     try:
@@ -82,3 +98,21 @@ def get_edit_pop_recoms(edit_pop_data, recom_count):
     result_list = sample(articles_list, recom_count)
     return result_list
 
+"""
+Creates a shuffling dictionary for shuffling a dictionary without preserving the original key set.
+"""
+
+def dictionary_shuffler_creator(key_set):
+    result_list = key_set.copy()
+    shuffle(result_list)
+    return dict(enumerate(result_list))
+
+def shuffle_dict_using_shuffler(d, shuffler):
+    return {x: d[shuffler[x]] for x in shuffler}
+
+def invert_list_by_coin_flip(l):
+    coin_flip = randint(0,1)
+    if coin_flip == 0:
+        return l
+    else:
+        return l[::-1]
