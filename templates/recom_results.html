@@ -41,7 +41,7 @@
         <div class="row">
           <div class="col-lg-12 mx-auto">
 
-                    <form name="feedback" action = "/thankyou" method = "POST">
+                    <form name="feedback" action = "/thankyou" method = "POST" onsubmit="submission_check_feedback();">
                         {% for comparison_number in range(pairwise_comparison_count) %}
                             {# We get the dictionary of articles for this recommendation (the 4-tuple or 3-tuple) #}
                             {% set current_pair_indices = comparison_pairs[comparison_number] %}
@@ -70,7 +70,7 @@
                                         </div>
 
                                         <div class="mx-auto">
-                                            <h4>Which one of these lists contains more articles that you would be interested in <b>reading?</b></h4>
+                                            <h4>Which one of these lists contains more articles that you would be interested in <b>reading</b>?</h4>
                                                 <input type="radio" id="read{{ comparison_number }}1" value="2" name="read_group{{ comparison_number }}">
                                                 <label for="read{{ comparison_number }}1">List A, by a wide margin.</label><br>
                                                 
@@ -88,7 +88,7 @@
                                         </div>
                                         
                                         <div class="mx-auto">
-                                            <h4>Which one of these lists contains more articles that you would be interested in <b>editing?</b></h4>
+                                            <h4>Which one of these lists contains more articles that you would be interested in <b>editing</b>?</h4>
                                                 <input type="radio" id="edit{{ comparison_number }}1" value="2" name="edit_group{{ comparison_number }}">
                                                 <label for="edit{{ comparison_number }}1">List A, by a wide margin.</label><br>
                                                 
@@ -187,6 +187,15 @@
         {% endfor %}
 
     });
+
+    function submission_check_feedback() {
+        if (!is_radio_group_complete('read_group', {{ pairwise_comparison_count }}) ||
+            !is_radio_group_complete('edit_group', {{ pairwise_comparison_count }}) ||
+            !is_radio_group_complete('uninterested_group', {{ pairwise_comparison_count }}))
+        {
+            event.preventDefault();
+        }
+    }
 
 </script>
 {% endblock %}
