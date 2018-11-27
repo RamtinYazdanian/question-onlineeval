@@ -48,19 +48,21 @@ def recom_result():
         else:
             doc_latent = pickle.load(open(doc_latent_filename, mode='rb'), encoding='latin1')
 
-        # The assumption is that the doc_latent file is already column-normalised and has n_q columns.
+        # The assumption is that the doc_latent file is already column-normalised. We make sure that it has exactly
+        # n_q columns, just in case.
         # Here, we calculate the dot product of the topic matrix and the answer vector, resulting in the
         # document-space representation of the user. Then, we sort it in descending order to get the highest-weighted
         # documents.
+        doc_latent = doc_latent[:, :n_q]
         doc_scores = (doc_latent.dot(answers_vector)).flatten()
         best_docs = np.argsort(doc_scores)
         best_docs = best_docs[::-1]
 
         # The dictionaries needed for pretty much every set of documents
-        doc_id_to_index = json.load(open('static/doc_id_index.json'))
+        doc_id_to_index = json.load(open(settings['article_id_to_index'], 'r'))
         doc_index_to_id = {int(doc_id_to_index[x]):int(x) for x in doc_id_to_index}
         # The following file is generated using get_id_name_dict in common_utils.py of the original repo.
-        doc_id_to_name = json.load(open('static/docid_docname.json', mode='r'))
+        doc_id_to_name = json.load(open(settings['article_id_to_name'], 'r'))
         doc_id_to_name = {int(x):doc_id_to_name[x] for x in doc_id_to_name}
 
         # The set (as in Python 'set') of documents that appear in the questions and should be avoided in the
@@ -72,7 +74,7 @@ def recom_result():
         # Both of the following lists are assumed to be lists of ids of top-ranking documents (in each one's
         # respective department).
         edit_pop_file = settings['edit_pop_list']
-        edit_pop_list = pickle.load(open(edit_pop_file, mode='rb'), encoding='latin1')
+        edit_pop_list = open(edit_pop_file, mode='r').readlines()
         view_pop_file = settings['view_pop_list']
         view_pop_list = json.load(open(view_pop_file, mode='r'))
 
@@ -87,7 +89,7 @@ def recom_result():
 
         edit_pop_recommendations = get_edit_pop_recoms(edit_pop_list, recom_count)
 
-        view_pop_recommendations = get_view_pop_recoms(view_pop_list, recom_count, doc_names_to_avoid)
+        view_pop_recommendations = get_view_pop_recoms(view_pop_list, recom_count)
 
         if settings.get('cf_recoms', None) is not None:
             all_cf_personal_recommendations = json.load(open(settings['cf_recoms'], mode='r'), encoding='latin1')
@@ -174,34 +176,6 @@ def thank_you_page():
         json.dump(results_to_save_dict, open(settings['output_dir']+output_filename+'.json', mode='w'))
 
         return render_template('thanks.html')
-
-# @app.route('/thankyou', methods=['POST'])
-# def thank_you_page():
-#     if request.method == 'POST':
-#         settings = json.load(open('static/settings.json', mode='r'))
-#         result = request.form
-#         question_mode = request.cookies.get('question_mode')
-#         user_name = result['name_field']
-#         result = {x:result[x] for x in result if x != 'name_field'}
-#         answers = {int(x.strip('u').strip('\'').strip('group')):int(result[x].strip('u').strip('\'')) for x in result}
-#
-#         print(answers)
-#         print(question_mode)
-#
-#         result_to_save = {}
-#         result_to_save['question_mode'] = question_mode
-#         result_to_save['question_mode_name'] = settings['modes'][question_mode]['mode_name']
-#         result_to_save['answers'] = answers
-#         result_to_save['username'] = user_name
-#
-#         output_filename = str(datetime.now())
-#         output_filename = output_filename.replace(' ', '_').replace(':','_').replace('.','_').replace('-','_')
-#         output_filename = output_filename + '_' + str(random.randint(0,200000))
-#
-#         make_sure_path_exists(settings['output_dir'])
-#         json.dump(result_to_save, open(settings['output_dir']+output_filename+'.json', mode='w'))
-#
-#         return render_template('thanks.html')
 
 
 if __name__ == '__main__':
