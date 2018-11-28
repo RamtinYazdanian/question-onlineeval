@@ -17,7 +17,7 @@ def q_form():
     questions = json.load(open(settings['questions'], mode='r'))
     questions = {str(k):questions[str(k)] for k in range(n_q)}
     resp = make_response(render_template('questions_form.html', questions = questions, n_q = n_q, cloud_dir = settings['cloud_dir']))
-    resp.set_cookie('n_q', n_q)
+    resp.set_cookie('n_q', str(n_q))
     return resp
 
 
@@ -68,15 +68,15 @@ def recom_result():
         # The set (as in Python 'set') of documents that appear in the questions and should be avoided in the
         # recommendations.
 
-        documents_to_avoid = pickle.load(open(settings['question_doc_ids'], mode='rb'))
-        doc_names_to_avoid = pickle.load(open(settings['question_doc_names'], mode='rb'))
+        documents_to_avoid = pickle.load(open(settings['question_doc_ids'], mode='rb'), encoding='latin1')
+        doc_names_to_avoid = pickle.load(open(settings['question_doc_names'], mode='rb'), encoding='latin1')
 
         # Both of the following lists are assumed to be lists of ids of top-ranking documents (in each one's
         # respective department).
         edit_pop_file = settings['edit_pop_list']
         edit_pop_list = open(edit_pop_file, mode='r').readlines()
         view_pop_file = settings['view_pop_list']
-        view_pop_list = json.load(open(view_pop_file, mode='r'))
+        view_pop_list = json.load(open(view_pop_file, mode='r', encoding='utf8'))
 
 
         q_based_recommendations = get_top_k_recommendations_by_id(best_docs, recom_count, doc_id_to_name,
@@ -133,6 +133,7 @@ def recom_result():
         shuffler = dictionary_shuffler_creator(list(comparison_pairs.keys()))
         comparison_pairs = shuffle_dict_using_shuffler(comparison_pairs, shuffler)
 
+        print(comparison_pairs)
 
         resp = make_response(render_template("recom_results.html", recoms_dict = final_recoms, recom_count=recom_count,
                             comparison_pairs = comparison_pairs, pairwise_comparison_count = len(comparison_pairs)))
