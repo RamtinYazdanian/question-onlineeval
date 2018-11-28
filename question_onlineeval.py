@@ -74,9 +74,9 @@ def recom_result():
         # Both of the following lists are assumed to be lists of ids of top-ranking documents (in each one's
         # respective department).
         edit_pop_file = settings['edit_pop_list']
-        edit_pop_list = open(edit_pop_file, mode='r').readlines()
+        edit_pop_list = open(edit_pop_file, mode='r', encoding='utf-8').readlines()
         view_pop_file = settings['view_pop_list']
-        view_pop_list = json.load(open(view_pop_file, mode='r', encoding='utf8'))
+        view_pop_list = json.load(open(view_pop_file, mode='r', encoding='utf-8'))
 
 
         q_based_recommendations = get_top_k_recommendations_by_id(best_docs, recom_count, doc_id_to_name,
