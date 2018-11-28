@@ -28,7 +28,7 @@
                 Now that we've generated recommendations for you, we'll be asking you {{ pairwise_comparison_count }} questions,
                 in each of which we present two lists of articles that we recommend to you.
                 The feedback we would like to ask you to give us, is to compare each pair of lists,
-                and tell us which list in the pair you would be more interested in editing or in reading.<br>
+                and tell us which list in the pair contains more articles that you would be interested in editing or in reading.<br>
                 Once you have answered all the questions, press the submit button to send us your feedback. Thank you for
                 helping us make Wikipedia more welcoming!
             </div>
@@ -47,7 +47,7 @@
                             {% set current_pair_indices = comparison_pairs[comparison_number] %}
                             {% set recom_list_A = recoms_dict[current_pair_indices[0]] %}
                             {% set recom_list_B = recoms_dict[current_pair_indices[1]] %}
-                            <div id="group_{{ comparison_number }}" class="frmdiv">
+                            <div id="group{{ comparison_number }}" class="frmdiv">
                                 <fieldset>
                                     <b>Comparison #{{ comparison_number + 1 }}: Please look at the two lists of recommendations below, and answer the questions that follow:</b>
                                         <div class="row">
