@@ -72,7 +72,7 @@ def get_top_k_recommendations_by_id(best_docs, recom_count, doc_id_to_name, docu
 
     return recom_results
 
-def diversity_based_clustering(docs_list, doc_latent, recom_count, n_per_cluster = 2):
+def diversity_based_clustering(docs_list, doc_latent, recom_count, n_per_cluster = 1):
     docs_list = np.array(docs_list)
     n_clusters = int(np.ceil(recom_count / n_per_cluster))
     kmeans_model = KMeans(n_clusters=n_clusters)

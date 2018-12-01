@@ -4,5 +4,5 @@
   "word_cloud":"static/joint/word_cloud.json", "output_dir":"results/",
   "question_doc_ids":"static/joint/id_avoid_list.pkl", "question_doc_names":"static/joint/name_avoid_list.pkl",
   "article_id_to_index":"static/doc_id_index.json", "article_id_to_name":"static/docid_docname.json",
-  "diversify_q_based_recoms": 400, "col_normalise": false
+  "diversify_q_based_recoms": 800, "col_normalise": false
 }
