@@ -54,6 +54,10 @@ def recom_result():
         # document-space representation of the user. Then, we sort it in descending order to get the highest-weighted
         # documents.
         doc_latent = doc_latent[:, :n_q]
+
+        if settings['col_normalise']:
+            doc_latent = doc_latent / np.reshape(np.linalg.norm(doc_latent, axis=0), newshape=(1, doc_latent.shape[1]))
+
         doc_scores = (doc_latent.dot(answers_vector)).flatten()
         best_docs = np.argsort(doc_scores)
         best_docs = best_docs[::-1]
@@ -81,7 +85,7 @@ def recom_result():
 
         q_based_recommendations = get_top_k_recommendations_by_id(best_docs, recom_count, doc_id_to_name,
                                                                   documents_to_avoid, doc_index_to_id=doc_index_to_id,
-                                                                  randomise=-1)
+                                                                  randomise=settings["randomise_q_based_recoms"])
         q_based_recommendations = [x['name'] for x in q_based_recommendations]
         # Need to shuffle this one because it's not randomised. The viewpop and editpop recoms are already randomised
         # so we don't shuffle them.
