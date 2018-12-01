@@ -79,19 +79,19 @@ aS'State formation'
 p39
 aS'Catoptria'
 p40
-aS'"Sikeston'
+aS'Sikeston, Missouri'
 p41
-aS'"Selma'
+aS'Selma, Alabama'
 p42
 aS'Timeline of Baltimore'
 p43
-aS'"St. Augustine'
+aS'St. Augustine, Florida'
 p44
-aS'"Clarksville'
+aS'Clarksville, Tennessee'
 p45
-aS'"Chambersburg'
+aS'Chambersburg, Pennsylvania'
 p46
-aS'"Lawrence'
+aS'Lawrence, Kansas'
 p47
 aS'History of Philadelphia'
 p48
@@ -99,25 +99,25 @@ aS'History of Maryland'
 p49
 aS'History of the Kansas City metropolitan area'
 p50
-aS'"Annapolis'
+aS'Annapolis, Maryland'
 p51
-aS'"Petersburg'
+aS'Petersburg, Virginia'
 p52
-aS'"Fernandina Beach'
+aS'Fernandina Beach, Florida'
 p53
-aS'"Alexandria'
+aS'Alexandria, Virginia'
 p54
 aS'United States occupation of Nicaragua'
 p55
-aS'"Pensacola'
+aS'Pensacola, Florida'
 p56
-aS'"Camden County'
+aS'Camden County, Georgia'
 p57
 aS'Allied leaders of World War II'
 p58
-aS'"Baltimore County'
+aS'Baltimore County, Maryland'
 p59
-aS'"Louisville'
+aS'Louisville, Kentucky, in the American Civil War'
 p60
 aS'Incomplete Nature'
 p61
@@ -159,7 +159,7 @@ aS'Flux balance analysis'
 p79
 aS'Functional magnetic resonance imaging'
 p80
-aS'"Philipp'
+aS'Philipp, Prince of Eulenburg'
 p81
 aS'Maximilien Robespierre'
 p82
@@ -173,7 +173,7 @@ aS'Black Horror on the Rhine'
 p86
 aS'John Adams'
 p87
-aS'"Against the Murderous'
+aS'Against the Murderous, Thieving Hordes of Peasants'
 p88
 aS'Religious views of Adolf Hitler'
 p89
@@ -199,45 +199,45 @@ aS'Franz von Papen'
 p99
 aS'Houston Stewart Chamberlain'
 p100
-aS'"Tri-Cities'
+aS'Tri-Cities, Washington'
 p101
-aS'"Kent'
+aS'Kent, Ohio'
 p102
-aS'"Champaign'
+aS'Champaign, Illinois'
 p103
-aS'"Limon'
+aS'Limon, Colorado'
 p104
-aS'"Carlsbad'
+aS'Carlsbad, New Mexico'
 p105
-aS'"Garland'
+aS'Garland, Texas'
 p106
-aS'"Lansing'
+aS'Lansing, Michigan'
 p107
-aS'"Palmdale'
+aS'Palmdale, California'
 p108
 aS'Pittsburgh'
 p109
-aS'"Reno'
+aS'Reno, Nevada'
 p110
-aS'"Flagstaff'
+aS'Flagstaff, Arizona'
 p111
-aS'"Duluth'
+aS'Duluth, Minnesota'
 p112
-aS'"Huntington Beach'
+aS'Huntington Beach, California'
 p113
 aS'Lehigh Valley'
 p114
-aS'"Long Beach'
+aS'Long Beach, California'
 p115
-aS'"Cape Coral'
+aS'Cape Coral, Florida'
 p116
 aS'Oklahoma City'
 p117
-aS'"Kalamazoo'
+aS'Kalamazoo, Michigan'
 p118
-aS'"Lancaster'
+aS'Lancaster, California'
 p119
-aS'"Modesto'
+aS'Modesto, California'
 p120
 aS'Match fixing'
 p121
@@ -279,45 +279,45 @@ aS'Penalty shoot-out (association football)'
 p139
 aS'BK Mlad\xc3\xa1 Boleslav'
 p140
-aS'"Nyack'
+aS'Nyack, New York'
 p141
-aS'"Mill Valley'
+aS'Mill Valley, California'
 p142
-aS'"Lyons'
+aS'Lyons, Colorado'
 p143
-aS'"Woodstock'
+aS'Woodstock, New York'
 p144
-aS'"Ridgefield'
+aS'Ridgefield, Connecticut'
 p145
-aS'"Westport'
+aS'Westport, Connecticut'
 p146
-aS'"Northampton'
+aS'Northampton, Massachusetts'
 p147
-aS'"Lovelock'
+aS'Lovelock, Nevada'
 p148
-aS'"Eureka Springs'
+aS'Eureka Springs, Arkansas'
 p149
-aS'"Saluda'
+aS'Saluda, North Carolina'
 p150
-aS'"Croton-on-Hudson'
+aS'Croton-on-Hudson, New York'
 p151
-aS'"Ellenville'
+aS'Ellenville, New York'
 p152
-aS'"Rockport'
+aS'Rockport, Massachusetts'
 p153
-aS'"Sedona'
+aS'Sedona, Arizona'
 p154
-aS'"Taos'
+aS'Taos, New Mexico'
 p155
-aS'"Ventura'
+aS'Ventura, California'
 p156
-aS'"New Canaan'
+aS'New Canaan, Connecticut'
 p157
-aS'"Glen Cove'
+aS'Glen Cove, New York'
 p158
-aS'"Nevada City'
+aS'Nevada City, California'
 p159
-aS'"Tarrytown'
+aS'Tarrytown, New York'
 p160
 aS'Landing Craft Assault'
 p161
@@ -493,9 +493,9 @@ aS'Alexander Mahone'
 p246
 aS'Penelope Garcia'
 p247
-aS'"Theodore ""T-Bag"" Bagwell"'
+aS'Theodore ""T-Bag"" Bagwell'
 p248
-aS'"On the Other Hand'
+aS'On the Other Hand, Death'
 p249
 aS'David Hale (Sons of Anarchy)'
 p250
@@ -569,7 +569,7 @@ aS'IIT Institute of Design'
 p284
 aS'Folger Shakespeare Library'
 p285
-aS'"Lady Margaret Hall'
+aS'Lady Margaret Hall, Oxford'
 p286
 aS'De Montfort University'
 p287
@@ -577,7 +577,7 @@ aS'Princeton University School of Architecture'
 p288
 aS'Maryland Institute College of Art'
 p289
-aS'"University College'
+aS'University College, Toronto'
 p290
 aS'BGSU Firelands'
 p291
@@ -585,7 +585,7 @@ aS"Hellmuth Ladies' College"
 p292
 aS'Terry Belanger'
 p293
-aS'"Goldsmiths'
+aS'Goldsmiths, University of London'
 p294
 aS'Stanton Williams'
 p295
@@ -599,45 +599,45 @@ aS'The Mary Louis Academy'
 p299
 aS'New York School of Applied Design for Women'
 p300
-aS'"Stark County'
+aS'Stark County, North Dakota'
 p301
-aS'"Elkhorn'
+aS'Elkhorn, Omaha, Nebraska'
 p302
-aS'"Eunola'
+aS'Eunola, Alabama'
 p303
-aS'"Doyle Township'
+aS'Doyle Township, Michigan'
 p304
-aS'"Cammack Village'
+aS'Cammack Village, Arkansas'
 p305
-aS'"Hettinger County'
+aS'Hettinger County, North Dakota'
 p306
-aS'"Summerset'
+aS'Summerset, South Dakota'
 p307
-aS'"Apple Valley'
+aS'Apple Valley, Utah'
 p308
-aS'"Mustang'
+aS'Mustang, Texas'
 p309
-aS'"Barnwell County'
+aS'Barnwell County, South Carolina'
 p310
-aS'"Frederick'
+aS'Frederick, Kansas'
 p311
-aS'"Marshall Creek'
+aS'Marshall Creek, Texas'
 p312
-aS'"Huetter'
+aS'Huetter, Idaho'
 p313
-aS'"Moro Plantation'
+aS'Moro Plantation, Maine'
 p314
-aS'"Gravel Ridge'
+aS'Gravel Ridge, Arkansas'
 p315
-aS'"Oxbow'
+aS'Oxbow, Maine'
 p316
-aS'"Linndale'
+aS'Linndale, Ohio'
 p317
-aS'"Latonia Lakes'
+aS'Latonia Lakes, Kentucky'
 p318
-aS'"De Soto'
+aS'De Soto, Georgia'
 p319
-aS'"Lamar'
+aS'Lamar, South Carolina'
 p320
 aS'Fort Stewart'
 p321
@@ -661,7 +661,7 @@ aS'United States Army Rangers'
 p330
 aS'Special forces'
 p331
-aS'"Goose Creek'
+aS'Goose Creek, South Carolina'
 p332
 aS'Columbus Air Force Base'
 p333
@@ -681,7 +681,7 @@ aS'Fort Bragg'
 p340
 aS'Tramways in Exeter'
 p341
-aS'"Charing Cross'
+aS'Charing Cross, Euston and Hampstead Railway'
 p342
 aS'George Hudson'
 p343
@@ -851,7 +851,7 @@ aS'Hugo Black'
 p425
 aS'Speaker of the North Carolina House of Representatives'
 p426
-aS'"Prospect Hill Cemetery (Washington'
+aS'Prospect Hill Cemetery (Washington, D.C.)'
 p427
 aS'North Carolina General Assembly of 1778'
 p428
@@ -889,7 +889,7 @@ aS'Blackhawk High School'
 p444
 aS'Pleasant Valley High School (Pennsylvania)'
 p445
-aS'"Carlisle High School (Carlisle'
+aS'Carlisle High School (Carlisle, Pennsylvania)'
 p446
 aS'Lower Dauphin High School'
 p447
@@ -919,19 +919,19 @@ aS'Cedar Cliff High School'
 p459
 aS'Shamokin Area High School'
 p460
-aS'"European Parliament election'
+aS'European Parliament election, 2004'
 p461
 aS'Alliance of Liberals and Democrats for Europe Party'
 p462
-aS'"Costa Rican general election'
+aS'Costa Rican general election, 2010'
 p463
 aS'Civic Democratic Alliance'
 p464
-aS'"Chilean general election'
+aS'Chilean general election, 2017'
 p465
 aS'Party of Civic Rights'
 p466
-aS'"Loiret\'s 4th constituency by-election'
+aS"Loiret's 4th constituency by-election, 2018"
 p467
 aS'Renault Clio Cup'
 p468
@@ -939,25 +939,25 @@ aS"Pas-de-Calais's 11th constituency"
 p469
 aS'Formula Renault'
 p470
-aS'"Costa Rican general election'
+aS'Costa Rican general election, 1958'
 p471
-aS'"Italian general election'
+aS'Italian general election, 1996'
 p472
 aS'Freedom and Direct Democracy'
 p473
-aS'"Azores regional election'
+aS'Azores regional election, 1996'
 p474
 aS'Party of European Socialists'
 p475
 aS'Green Party (Czech Republic)'
 p476
-aS'"Albanian parliamentary election'
+aS'Albanian parliamentary election, 2017'
 p477
 aS'Union of Democrats for the Republic'
 p478
-aS'"Democratic Party (Italy) leadership election'
+aS'Democratic Party (Italy) leadership election, 2019'
 p479
-aS'"Costa Rican general election'
+aS'Costa Rican general election, 2002'
 p480
 aS'Crosswordese'
 p481
@@ -979,7 +979,7 @@ aS'Tony Caridi'
 p489
 aS"America's Team"
 p490
-aS'"History of sports in Fort Wayne'
+aS'History of sports in Fort Wayne, Indiana'
 p491
 aS'Buffalo Bills'
 p492
@@ -1001,7 +1001,7 @@ aS'Loyd Arms'
 p500
 aS'The New School at West Heath'
 p501
-aS'"St Catherine\'s School'
+aS"St Catherine's School, Ventnor"
 p502
 aS'Fell Charter Elementary School'
 p503
@@ -1017,7 +1017,7 @@ aS'Columbia Borough School District'
 p508
 aS'Sylvan Heights Science Charter School'
 p509
-aS'"Old Manor Hospital'
+aS'Old Manor Hospital, Salisbury'
 p510
 aS'Health Promotion Board'
 p511
@@ -1025,7 +1025,7 @@ aS'Elizabeth Casson'
 p512
 aS'Altoona Area School District'
 p513
-aS'"Richland School District (Cambria County'
+aS'Richland School District (Cambria County, Pennsylvania)'
 p514
 aS'Cheltenham Township School District'
 p515
@@ -1331,7 +1331,7 @@ aS'Slide (hoverboard)'
 p665
 aS'Anderson Mazoka'
 p666
-aS'"Gennady Zyuganov presidential campaign'
+aS'Gennady Zyuganov presidential campaign, 1996'
 p667
 aS'Jaak Aaviksoo'
 p668
@@ -1400,7 +1400,7 @@ aS'Anti-VGKC-complex encephalitis'
 p698
 aS'Ribose-5-phosphate isomerase deficiency'
 p699
-aS'"Niemann\xe2\x80\x93Pick disease'
+aS'Niemann\xe2\x80\x93Pick disease, type C'
 p700
 aS'Mevalonate kinase deficiency'
 p701
