@@ -1,7 +1,11 @@
 import os
 import errno
 from random import shuffle, sample, randint
+from sklearn.cluster import KMeans
+from collections import Counter
 import re
+import operator
+import numpy as np
 
 Q_BASED_STR = 'q_based'
 VIEW_POP_STR = 'view_pop'
@@ -39,47 +43,58 @@ Assuming best_docs is a list of document indices or ids sorted in descending ord
 picks recom_count recommendations that are not members of documents_to_avoid, and returns a list of dictionaries 
 containing doc ids and names. If doc_index_to_id is None, best_docs is assumed to contain ids; otherwise, it's assumed 
 to contain indices.
-The optional 'randomise' argument tells the function whether to provide a straight-up list of highest-scoring documents 
-(when randomise == -1), or to first shuffle the top 'randomise' documents and then provide recommendations out of those. 
+The optional 'diversify' argument tells the function whether to provide a straight-up list of highest-scoring documents 
+(when diversify == -1), or to perform diversification by taking a larger set of articles, clustering them, and then 
+returning the top-scoring ones from each cluster.
 """
 
 def get_top_k_recommendations_by_id(best_docs, recom_count, doc_id_to_name, documents_to_avoid,
-                                    doc_index_to_id=None, randomise=-1):
+                                    doc_index_to_id, diversify=-1, doc_latent=None):
     # This check is to make sure that we don't end up with too few documents because some of them were in
     # documents_to_avoid.
-    if randomise != -1:
-        if randomise < recom_count * 2:
-            randomise = recom_count * 2
-        if randomise > len(best_docs):
-            randomise = len(best_docs)
-        docs_list = best_docs[:randomise]
-        shuffle(docs_list)
+    if diversify != -1 and doc_latent is not None:
+        if diversify < recom_count * 5:
+            diversify = recom_count * 2
+        if diversify > len(best_docs):
+            diversify = len(best_docs)
+        docs_list = best_docs[:800 + diversify + recom_count]
     else:
-        docs_list = best_docs
+        docs_list = best_docs[:800 + recom_count]
 
-    recom_results = list()
-    recoms_so_far = 0
-    best_docs_counter = -1
+    docs_list = [x for x in docs_list if doc_index_to_id[x] not in documents_to_avoid]
+    if (diversify != -1 and doc_latent is not None):
+        docs_list = docs_list[:diversify]
+        docs_list = diversity_based_clustering(docs_list, doc_latent, recom_count)
+    else:
+        docs_list = docs_list[:recom_count]
 
-    while recoms_so_far < recom_count and best_docs_counter < len(best_docs):
-        best_docs_counter += 1
-        if doc_index_to_id is not None:
-            current_id = doc_index_to_id[docs_list[best_docs_counter]]
-        else:
-            current_id = docs_list[best_docs_counter]
-        # Now we need to make sure to only recommend documents that were not present in the questions.
-        if (current_id in documents_to_avoid):
-            continue
-        current_recom = dict()
-
-        current_recom['id'] = current_id
-        print(current_id)
-        print(doc_id_to_name[current_id])
-        current_recom['name'] = doc_id_to_name[current_id]
-        recom_results.append(current_recom)
-        recoms_so_far += 1
+    recom_results = [doc_id_to_name[doc_index_to_id[x]] for x in docs_list]
 
     return recom_results
+
+def diversity_based_clustering(docs_list, doc_latent, recom_count, n_per_cluster = 2):
+    docs_list = np.array(docs_list)
+    n_clusters = int(np.ceil(recom_count / n_per_cluster))
+    kmeans_model = KMeans(n_clusters=n_clusters)
+    data_subset = doc_latent[docs_list, :]
+    cluster_indices = np.array(kmeans_model.fit_predict(data_subset))
+
+    cluster_counts = dict(Counter(cluster_indices))
+    largest_cluster_index = max(cluster_counts.items(), key=operator.itemgetter(1))[0]
+    cluster_count_to_get = {x: n_per_cluster for x in cluster_counts}
+    for i in cluster_counts:
+        if cluster_counts[i] < n_per_cluster:
+            cluster_count_to_get[largest_cluster_index] += n_per_cluster - cluster_counts[i]
+            cluster_count_to_get[i] = cluster_counts[i]
+
+    result_indices_list = []
+    for ind in cluster_count_to_get:
+        current_list = docs_list[np.where(cluster_indices==ind)].tolist()
+        result_indices_list.extend(sample(current_list, cluster_count_to_get[ind]))
+
+    result_indices_list = result_indices_list[:recom_count]
+    shuffle(result_indices_list)
+    return result_indices_list
 
 """
 Samples recom_count articles from the view pop JSON file. The articles will be in namespace 0 (and the method used 

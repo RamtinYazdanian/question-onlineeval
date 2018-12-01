@@ -48,17 +48,15 @@ def recom_result():
         else:
             doc_latent = pickle.load(open(doc_latent_filename, mode='rb'), encoding='latin1')
 
-        # The assumption is that the doc_latent file is already column-normalised. We make sure that it has exactly
-        # n_q columns, just in case.
+        # We keep the original matrix for the diversification, but only use n_q columns for the recommendations.
         # Here, we calculate the dot product of the topic matrix and the answer vector, resulting in the
         # document-space representation of the user. Then, we sort it in descending order to get the highest-weighted
         # documents.
-        doc_latent = doc_latent[:, :n_q]
 
         if settings['col_normalise']:
             doc_latent = doc_latent / np.reshape(np.linalg.norm(doc_latent, axis=0), newshape=(1, doc_latent.shape[1]))
 
-        doc_scores = (doc_latent.dot(answers_vector)).flatten()
+        doc_scores = (doc_latent[:, :n_q].dot(answers_vector)).flatten()
         best_docs = np.argsort(doc_scores)
         best_docs = best_docs[::-1]
 
@@ -72,7 +70,7 @@ def recom_result():
         # The set (as in Python 'set') of documents that appear in the questions and should be avoided in the
         # recommendations.
 
-        documents_to_avoid = pickle.load(open(settings['question_doc_ids'], mode='rb'), encoding='latin1')
+        documents_to_avoid = set(pickle.load(open(settings['question_doc_ids'], mode='rb'), encoding='latin1'))
         doc_names_to_avoid = pickle.load(open(settings['question_doc_names'], mode='rb'), encoding='latin1')
 
         # Both of the following lists are assumed to be lists of ids of top-ranking documents (in each one's
@@ -85,8 +83,9 @@ def recom_result():
 
         q_based_recommendations = get_top_k_recommendations_by_id(best_docs, recom_count, doc_id_to_name,
                                                                   documents_to_avoid, doc_index_to_id=doc_index_to_id,
-                                                                  randomise=settings["randomise_q_based_recoms"])
-        q_based_recommendations = [x['name'] for x in q_based_recommendations]
+                                                                  diversify=settings["diversify_q_based_recoms"],
+                                                                  doc_latent=doc_latent)
+
         # Need to shuffle this one because it's not randomised. The viewpop and editpop recoms are already randomised
         # so we don't shuffle them.
         random.shuffle(q_based_recommendations)
@@ -100,7 +99,7 @@ def recom_result():
             if user_name in all_cf_personal_recommendations:
                 cf_personal_recoms = get_top_k_recommendations_by_id(all_cf_personal_recommendations[user_name],
                                                                      recom_count, doc_id_to_name, documents_to_avoid,
-                                                                     doc_index_to_id=None, randomise=100)
+                                                                     doc_index_to_id=None, diversify=100)
                 random.shuffle(cf_personal_recoms)
                 recom_type_count = 4
             else:
