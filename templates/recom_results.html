@@ -71,60 +71,60 @@
                                         </div>
 
                                         <br>
-                                        <h4>Which one of these lists, A or B, contains more articles that you would be interested in <b>reading</b>, and by what margin?</h4>
+                                        <h4>Which one of these lists, A or B, contains more articles that you would be interested in <b>reading</b>?</h4>
                                         <div class="row">
                                                 <div class="mr-5"><input type="radio" id="read{{ comparison_number }}1" value="2" name="read_group{{ comparison_number }}">
-                                                    <br><label for="read{{ comparison_number }}1">List A, by a wide margin.</label></div>
+                                                    <br><label for="read{{ comparison_number }}1">A much more than B.</label></div>
                                                 
                                                 <div class="mr-5"><input type="radio" id="read{{ comparison_number }}2" value="1" name="read_group{{ comparison_number }}">
-                                                    <br><label for="read{{ comparison_number }}2">List A, by a narrow margin.</label></div>
+                                                    <br><label for="read{{ comparison_number }}2">A slightly more than B.</label></div>
                                                 
                                                 <div class="mr-5"><input type="radio" id="read{{ comparison_number }}3" value="0" name="read_group{{ comparison_number }}">
                                                     <br><label for="read{{ comparison_number }}3">They are equal for me.</label></div>
                                                 
                                                 <div class="mr-5"><input type="radio" id="read{{ comparison_number }}4" value="-1" name="read_group{{ comparison_number }}">
-                                                    <br><label for="read{{ comparison_number }}4">List B, by a narrow margin.</label></div>
+                                                    <br><label for="read{{ comparison_number }}4">B slightly more than A.</label></div>
                                                 
                                                 <div class="mr-5"><input type="radio" id="read{{ comparison_number }}5" value="-2" name="read_group{{ comparison_number }}">
-                                                    <br><label for="read{{ comparison_number }}5">List B, by a wide margin.</label></div>
+                                                    <br><label for="read{{ comparison_number }}5">B much more than A.</label></div>
                                         </div>
 
                                         <br>
-                                        <h4>Which one of these lists contains more articles that you would be interested in <b>editing</b>?</h4>
+                                        <h4>Which one of these lists, A or B, contains more articles that you would be interested in <b>editing</b>?</h4>
                                         <div class="row">
                                                 <div class="mr-5"><input type="radio" id="edit{{ comparison_number }}1" value="2" name="edit_group{{ comparison_number }}">
-                                                    <br><label for="edit{{ comparison_number }}1">List A, by a wide margin.</label></div>
+                                                    <br><label for="edit{{ comparison_number }}1">A much more than B.</label></div>
                                                 
                                                 <div class="mr-5"><input type="radio" id="edit{{ comparison_number }}2" value="1" name="edit_group{{ comparison_number }}">
-                                                    <br><label for="edit{{ comparison_number }}2">List A, by a narrow margin.</label></div>
+                                                    <br><label for="edit{{ comparison_number }}2">A slightly more than B.</label></div>
                                                 
                                                 <div class="mr-5"><input type="radio" id="edit{{ comparison_number }}3" value="0" name="edit_group{{ comparison_number }}">
                                                     <br><label for="edit{{ comparison_number }}3">They are equal for me.</label></div>
                                                 
                                                 <div class="mr-5"><input type="radio" id="edit{{ comparison_number }}4" value="-1" name="edit_group{{ comparison_number }}">
-                                                    <br><label for="edit{{ comparison_number }}4">List B, by a narrow margin.</label></div>
+                                                    <br><label for="edit{{ comparison_number }}4">B slightly more than A.</label></div>
                                                 
                                                 <div class="mr-5"><input type="radio" id="edit{{ comparison_number }}5" value="-2" name="edit_group{{ comparison_number }}">
-                                                    <br><label for="edit{{ comparison_number }}5">List B, by a wide margin.</label></div>
+                                                    <br><label for="edit{{ comparison_number }}5">B much more than A.</label></div>
                                         </div>
 
                                         <br>
-                                        <h4>Which one of these lists contains more articles that you are <b>not</b> interested in at all, neither for reading nor for editing?</h4>
+                                        <h4>Which one of these lists, A or B, contains more articles that you are <b>not</b> interested in at all, neither for reading nor for editing?</h4>
                                         <div class="row">
                                                 <div class="mr-5"><input type="radio" id="uninterested{{ comparison_number }}1" value="2" name="uninterested_group{{ comparison_number }}">
-                                                    <br><label for="uninterested{{ comparison_number }}1">List A, by a wide margin.</label></div>
+                                                    <br><label for="uninterested{{ comparison_number }}1">A much more than B.</label></div>
 
                                                 <div class="mr-5"><input type="radio" id="uninterested{{ comparison_number }}2" value="1" name="uninterested_group{{ comparison_number }}">
-                                                    <br><label for="uninterested{{ comparison_number }}2">List A, by a narrow margin.</label></div>
+                                                    <br><label for="uninterested{{ comparison_number }}2">A slightly more than B.</label></div>
 
                                                 <div class="mr-5"><input type="radio" id="uninterested{{ comparison_number }}3" value="0" name="uninterested_group{{ comparison_number }}">
                                                     <br><label for="uninterested{{ comparison_number }}3">They are equal for me.</label></div>
 
                                                 <div class="mr-5"><input type="radio" id="uninterested{{ comparison_number }}4" value="-1" name="uninterested_group{{ comparison_number }}">
-                                                    <br><label for="uninterested{{ comparison_number }}4">List B, by a narrow margin.</label></div>
+                                                    <br><label for="uninterested{{ comparison_number }}4">B slightly more than A.</label></div>
 
                                                 <div class="mr-5"><input type="radio" id="uninterested{{ comparison_number }}5" value="-2" name="uninterested_group{{ comparison_number }}">
-                                                    <br><label for="uninterested{{ comparison_number }}5">List B, by a wide margin.</label></div>
+                                                    <br><label for="uninterested{{ comparison_number }}5">B much more than A.</label></div>
                                         </div>
 
                                         <div class="form-group">
@@ -137,7 +137,6 @@
 
                                                 {% if comparison_number != pairwise_comparison_count - 1 %}
                                                     <button class="btn btn-primary" id="next{{ comparison_number }}" type="button">Next <span class="fa fa-arrow-right"></span></button>
-                                                    <button class="btn btn-dark" id="tolast{{ comparison_number }}" type="button"><span class="fa fa-arrow-left"></span> To last</button>
                                                 {% else %}
                                                     <input class="btn btn-primary" id="next{{ comparison_number }}" type = "submit" value = "Submit"/>
                                                 {% endif %}
@@ -182,11 +181,11 @@
                     $("#group{{ key + 1 }}").show("fast");
                     $(document).scrollTop( $("#recoms").offset().top );
                 });
-                $("#tolast{{ key }}").click(function () {
-                    $(".frmdiv").hide("fast");
-                    $("#group{{ pairwise_comparison_count - 1 }}").show("fast");
-                    $(document).scrollTop( $("#recoms").offset().top );
-                });
+                {#$("#tolast{{ key }}").click(function () {#}
+                {#    $(".frmdiv").hide("fast");#}
+                {#    $("#group{{ n_q - 1 }}").show("fast");#}
+                {#    $(document).scrollTop( $("#questions").offset().top );#}
+                {# });#}
             {% endif %}
         {% endfor %}
 
