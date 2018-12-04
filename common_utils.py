@@ -11,17 +11,7 @@ Q_BASED_STR = 'q_based'
 VIEW_POP_STR = 'view_pop'
 EDIT_POP_STR = 'edit_pop'
 CF_BASED_STR = 'cf_based'
-
-LIST_COMPARISON_DICT_WITH_CF = {0 : [Q_BASED_STR, CF_BASED_STR],
-                                1 : [Q_BASED_STR, VIEW_POP_STR],
-                                2 : [Q_BASED_STR, EDIT_POP_STR],
-                                3 : [CF_BASED_STR, VIEW_POP_STR],
-                                4 : [CF_BASED_STR, EDIT_POP_STR],
-                                5 : [EDIT_POP_STR, VIEW_POP_STR]}
-
-LIST_COMPARISON_DICT_NO_CF = {0 : [Q_BASED_STR, VIEW_POP_STR],
-                              1 : [Q_BASED_STR, EDIT_POP_STR],
-                              2 : [EDIT_POP_STR, VIEW_POP_STR]}
+N_RECOM_GROUPS = 6
 
 def make_sure_path_exists(path):
     try:
@@ -48,8 +38,8 @@ The optional 'diversify' argument tells the function whether to provide a straig
 returning the top-scoring ones from each cluster.
 """
 
-def get_top_k_recommendations_by_id(best_docs, recom_count, doc_id_to_name, documents_to_avoid,
-                                    doc_index_to_id, diversify=-1, doc_latent=None):
+def get_top_k_q_based(best_docs, recom_count, doc_id_to_name, documents_to_avoid,
+                      doc_index_to_id, diversify=-1, doc_latent=None):
     # This check is to make sure that we don't end up with too few documents because some of them were in
     # documents_to_avoid.
     if diversify != -1 and doc_latent is not None:
@@ -70,6 +60,14 @@ def get_top_k_recommendations_by_id(best_docs, recom_count, doc_id_to_name, docu
 
     recom_results = [doc_id_to_name[doc_index_to_id[x]] for x in docs_list]
 
+    return recom_results
+
+def get_top_k_cf(best_docs, recom_count, doc_id_to_name, documents_to_avoid,
+                      doc_index_to_id):
+    docs_list = [x for x in best_docs if doc_index_to_id[x] not in documents_to_avoid]
+    shuffle(docs_list)
+    docs_list = docs_list[:recom_count]
+    recom_results = [doc_id_to_name[doc_index_to_id[x]] for x in docs_list]
     return recom_results
 
 def diversity_based_clustering(docs_list, doc_latent, recom_count, n_per_cluster = 1):

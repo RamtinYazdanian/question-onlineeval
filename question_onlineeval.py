@@ -81,58 +81,82 @@ def recom_result():
         view_pop_list = json.load(open(view_pop_file, mode='r', encoding='utf-8'))
 
 
-        q_based_recommendations = get_top_k_recommendations_by_id(best_docs, recom_count, doc_id_to_name,
-                                                                  documents_to_avoid, doc_index_to_id=doc_index_to_id,
-                                                                  diversify=settings["diversify_q_based_recoms"],
-                                                                  doc_latent=doc_latent)
-
-        # Need to shuffle this one because it's not randomised. The viewpop and editpop recoms are already randomised
-        # so we don't shuffle them.
-        random.shuffle(q_based_recommendations)
-
-        edit_pop_recommendations = get_edit_pop_recoms(edit_pop_list, recom_count)
-
-        view_pop_recommendations = get_view_pop_recoms(view_pop_list, recom_count)
+        q_based_recommendations = get_top_k_q_based(best_docs, recom_count, doc_id_to_name,
+                                                    documents_to_avoid, doc_index_to_id=doc_index_to_id,
+                                                    diversify=settings["diversify_q_based_recoms"],
+                                                    doc_latent=doc_latent)
 
         if settings.get('cf_recoms', None) is not None:
             all_cf_personal_recommendations = json.load(open(settings['cf_recoms'], mode='r'), encoding='latin1')
             if user_name in all_cf_personal_recommendations:
-                cf_personal_recoms = get_top_k_recommendations_by_id(all_cf_personal_recommendations[user_name],
-                                                                     recom_count, doc_id_to_name, documents_to_avoid,
-                                                                     doc_index_to_id=None, diversify=100)
+                n_baselines = 3
+                cf_personal_recoms = get_top_k_cf(all_cf_personal_recommendations[user_name],
+                                        recom_count // n_baselines, doc_id_to_name, documents_to_avoid,
+                                        doc_index_to_id=doc_index_to_id)
+
                 random.shuffle(cf_personal_recoms)
-                recom_type_count = 4
             else:
                 cf_personal_recoms = None
-                recom_type_count = 3
+                n_baselines = 2
         else:
             cf_personal_recoms = None
-            recom_type_count = 3
+            n_baselines = 2
+
+        # Need to shuffle this one because it's not necessarily randomised (it's not randomised if we don't use the
+        # diversification scheme). The viewpop and editpop recoms are already randomised
+        # so we don't shuffle them.
+        random.shuffle(q_based_recommendations)
+        edit_pop_recommendations = get_edit_pop_recoms(edit_pop_list, recom_count // n_baselines)
+        view_pop_recommendations = get_view_pop_recoms(view_pop_list, recom_count // n_baselines)
 
         if cf_personal_recoms is not None:
-            recom_field_types = {0: Q_BASED_STR, 1: VIEW_POP_STR, 2: EDIT_POP_STR, 3: CF_BASED_STR}
-            final_recoms = {0: q_based_recommendations,
-                            1: view_pop_recommendations,
-                            2: edit_pop_recommendations,
-                            3: cf_personal_recoms}
-            comparison_pairs = LIST_COMPARISON_DICT_WITH_CF
+            initial_recom_field_types = {0: Q_BASED_STR, 1: VIEW_POP_STR, 2: EDIT_POP_STR, 3: CF_BASED_STR}
+            # The keys of this dictionary HAVE TO BE sequential integers, starting from 0 which is the q-based
+            # list of recommendations. It MUST MATCH the previous dictionary in terms of recom types.
+            initial_recom_field_values = {0: q_based_recommendations,
+                                        1: view_pop_recommendations,
+                                        2: edit_pop_recommendations,
+                                        3: cf_personal_recoms}
         else:
-            recom_field_types = {0: Q_BASED_STR, 1: VIEW_POP_STR, 2: EDIT_POP_STR}
-            final_recoms = {0: q_based_recommendations,
-                            1: view_pop_recommendations,
-                            2: edit_pop_recommendations}
-            comparison_pairs = LIST_COMPARISON_DICT_NO_CF
+            initial_recom_field_types = {0: Q_BASED_STR, 1: VIEW_POP_STR, 2: EDIT_POP_STR}
+            initial_recom_field_values = {0: q_based_recommendations,
+                                        1: view_pop_recommendations,
+                                        2: edit_pop_recommendations}
 
-        # Here, we convert the list of pairwise list comparisons into their actual indices in the recommendations
-        # dictionary, randomly (with a 50% chance) flip the order of lists in each pair, and the shuffle the whole
-        # list of pairs such that both the ordering of the feedback questions and the ordering of the pair within
-        # each question is randomised. We put all the information about these questions into the cookie so that
-        # we know what was what afterwards.
+        final_recom_field_types = {x:Q_BASED_STR for x in range(N_RECOM_GROUPS)}
+        per_baseline_groups = N_RECOM_GROUPS // n_baselines
+        for i in initial_recom_field_types.keys():
+            if initial_recom_field_types[i] == Q_BASED_STR:
+                continue
+            current_dict = {N_RECOM_GROUPS + (i-1)*per_baseline_groups + x:initial_recom_field_types[i]
+                            for x in range(per_baseline_groups)}
+            final_recom_field_types.update(current_dict)
 
-        inverted_field_types = invert_dict(recom_field_types)
-        comparison_pairs = {x:
-                    invert_list_by_coin_flip([inverted_field_types[y] for y in comparison_pairs[x]])
-                    for x in comparison_pairs}
+        print(final_recom_field_types)
+        individual_list_size = recom_count // N_RECOM_GROUPS
+        final_recoms = dict()
+        comparison_pairs = dict()
+
+        for i in range(N_RECOM_GROUPS):
+
+            starting_position_q_based = i*individual_list_size
+            # The key in initial_recom_field_values is the quotient + 1.
+            other_list_key = (i // per_baseline_groups) + 1
+            starting_position_other_list = (i % per_baseline_groups)*individual_list_size
+
+            q_based_sublist = q_based_recommendations[starting_position_q_based:
+                                                   starting_position_q_based+individual_list_size]
+            other_list_full = initial_recom_field_values[other_list_key]
+            other_sublist = other_list_full[starting_position_other_list:
+                                                   starting_position_other_list+individual_list_size]
+            final_recoms[i] = q_based_sublist
+            #print(i, final_recom_field_types[i], q_based_sublist)
+            final_recoms[i+N_RECOM_GROUPS] = other_sublist
+            #print(i+N_RECOM_GROUPS, final_recom_field_types[i+N_RECOM_GROUPS], other_sublist)
+            # Doing a coin flip to determine which list ends up on the left and which one on the right.
+            comparison_pairs[i] = invert_list_by_coin_flip([i, i+N_RECOM_GROUPS])
+
+        # Shuffle the comparison pairs
         shuffler = dictionary_shuffler_creator(list(comparison_pairs.keys()))
         comparison_pairs = shuffle_dict_using_shuffler(comparison_pairs, shuffler)
 
@@ -142,7 +166,7 @@ def recom_result():
                             comparison_pairs = comparison_pairs, pairwise_comparison_count = len(comparison_pairs)))
         resp.set_cookie('answers', json.dumps(answers))
         resp.set_cookie('name_field', user_name)
-        resp.set_cookie('recom_types', json.dumps(recom_field_types))
+        resp.set_cookie('recom_types', json.dumps(final_recom_field_types))
         resp.set_cookie('comparison_pairs', json.dumps(comparison_pairs))
         resp.set_cookie('n_q', str(n_q))
         resp.set_cookie('recom_count', str(recom_count))
