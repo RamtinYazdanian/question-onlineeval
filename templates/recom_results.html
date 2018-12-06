@@ -5,37 +5,16 @@
 
 {% block navbar %}
     <li class="nav-item">
-        <a class="nav-link js-scroll-trigger" href="#info">Notes</a>
-    </li>
-    <li>
-        <a class="nav-link js-scroll-trigger" href="#recoms">Your recommendations</a>
+        <a class="nav-link js-scroll-trigger" href="#recoms">Recommendations</a>
     </li>
 {% endblock %}
 
 {% block body %}
-<header class="bg-primary text-white">
+<header class="bg-light text-dark">
       <div class="container text-center">
         <h1>Your recommendations are here!</h1>
-        <p class="lead">We have generated several sets of recommendations for you,
-            and now we would like to ask you to provide us with feedback on them.</p>
       </div>
 </header>
-
-<section id="info">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto">
-                Now that we've generated recommendations for you, we'll be asking you {{ pairwise_comparison_count }} questions,
-                in each of which we present two lists of articles that we recommend to you. Each list is a collection of various articles that we believe
-                you might like, and is not necessarily a topically coherent set.
-                The feedback we would like to ask you to give us, is to compare each pair of lists,
-                and tell us which list in the pair contains more articles that you would be interested in editing or in reading.<br>
-                Once you have answered all the questions, press the submit button to send us your feedback. Thank you for
-                helping us make Wikipedia more welcoming!
-            </div>
-        </div>
-    </div>
-</section>
 
 <section id="recoms">
       <div class="container">
@@ -43,14 +22,27 @@
           <div class="col-lg-12 mx-auto">
 
                     <form name="feedback" action = "/thankyou" method = "POST" onsubmit="submission_check_feedback();">
-                        {% for comparison_number in range(pairwise_comparison_count) %}
+                        {% for comparison_number in range(-1, pairwise_comparison_count) %}
                             {# We get the dictionary of articles for this recommendation (the 4-tuple or 3-tuple) #}
-                            {% set current_pair_indices = comparison_pairs[comparison_number] %}
-                            {% set recom_list_A = recoms_dict[current_pair_indices[0]] %}
-                            {% set recom_list_B = recoms_dict[current_pair_indices[1]] %}
+
                             <div id="group{{ comparison_number }}" class="frmdiv">
+
                                 <fieldset>
-                                    <b>Comparison #{{ comparison_number + 1 }}: Please look at the two lists of recommendations below, and answer the questions that follow:</b>
+
+                                    {% if comparison_number == -1 %}
+                                        <div class="row">
+                                            <div class="col-lg-8 mx-auto">
+                                                Congratulations! You have now completed the first part of the questionnaire.
+                                                We have generated a set of recommendations for you based on your responses to the first part of this questionnaire.
+                                                Please respond to the next {{ pairwise_comparison_count }} questions about these recommendations!
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        {% set current_pair_indices = comparison_pairs[comparison_number] %}
+                                        {% set recom_list_A = recoms_dict[current_pair_indices[0]] %}
+                                        {% set recom_list_B = recoms_dict[current_pair_indices[1]] %}
+
+                                        <h5>Please look at the two lists of recommendations below, and answer the questions that follow:</h5>
                                         <div class="row">
                                             <div class="col left mx-auto">
                                                 <b>Recommendation list A:</b> <br>
@@ -71,45 +63,45 @@
                                         </div>
 
                                         <br>
-                                        <h4>Which one of these lists, A or B, contains more articles that you would be interested in <b>reading</b>?</h4>
+                                        <h5>Which one of these lists, A or B, contains more articles that you would be interested in <i>reading</i>?</h5>
                                         <div class="row">
                                                 <div class="mr-5"><input type="radio" id="read{{ comparison_number }}1" value="2" name="read_group{{ comparison_number }}">
                                                     <br><label for="read{{ comparison_number }}1">A much more than B.</label></div>
-                                                
+
                                                 <div class="mr-5"><input type="radio" id="read{{ comparison_number }}2" value="1" name="read_group{{ comparison_number }}">
                                                     <br><label for="read{{ comparison_number }}2">A slightly more than B.</label></div>
-                                                
+
                                                 <div class="mr-5"><input type="radio" id="read{{ comparison_number }}3" value="0" name="read_group{{ comparison_number }}">
                                                     <br><label for="read{{ comparison_number }}3">They are equal for me.</label></div>
-                                                
+
                                                 <div class="mr-5"><input type="radio" id="read{{ comparison_number }}4" value="-1" name="read_group{{ comparison_number }}">
                                                     <br><label for="read{{ comparison_number }}4">B slightly more than A.</label></div>
-                                                
+
                                                 <div class="mr-5"><input type="radio" id="read{{ comparison_number }}5" value="-2" name="read_group{{ comparison_number }}">
                                                     <br><label for="read{{ comparison_number }}5">B much more than A.</label></div>
                                         </div>
 
                                         <br>
-                                        <h4>Which one of these lists, A or B, contains more articles that you would be interested in <b>editing</b>?</h4>
+                                        <h5>Which one of these lists, A or B, contains more articles that you would be interested in <i>editing</i>?</h5>
                                         <div class="row">
                                                 <div class="mr-5"><input type="radio" id="edit{{ comparison_number }}1" value="2" name="edit_group{{ comparison_number }}">
                                                     <br><label for="edit{{ comparison_number }}1">A much more than B.</label></div>
-                                                
+
                                                 <div class="mr-5"><input type="radio" id="edit{{ comparison_number }}2" value="1" name="edit_group{{ comparison_number }}">
                                                     <br><label for="edit{{ comparison_number }}2">A slightly more than B.</label></div>
-                                                
+
                                                 <div class="mr-5"><input type="radio" id="edit{{ comparison_number }}3" value="0" name="edit_group{{ comparison_number }}">
                                                     <br><label for="edit{{ comparison_number }}3">They are equal for me.</label></div>
-                                                
+
                                                 <div class="mr-5"><input type="radio" id="edit{{ comparison_number }}4" value="-1" name="edit_group{{ comparison_number }}">
                                                     <br><label for="edit{{ comparison_number }}4">B slightly more than A.</label></div>
-                                                
+
                                                 <div class="mr-5"><input type="radio" id="edit{{ comparison_number }}5" value="-2" name="edit_group{{ comparison_number }}">
                                                     <br><label for="edit{{ comparison_number }}5">B much more than A.</label></div>
                                         </div>
 
                                         <br>
-                                        <h4>Which one of these lists, A or B, contains more articles that you are <b>not</b> interested in at all, neither for reading nor for editing?</h4>
+                                        <h5>Which one of these lists, A or B, contains more articles that you are <i>not</i> interested in at all, neither for reading nor for editing?</h5>
                                         <div class="row">
                                                 <div class="mr-5"><input type="radio" id="uninterested{{ comparison_number }}1" value="2" name="uninterested_group{{ comparison_number }}">
                                                     <br><label for="uninterested{{ comparison_number }}1">A much more than B.</label></div>
@@ -127,17 +119,27 @@
                                                     <br><label for="uninterested{{ comparison_number }}5">B much more than A.</label></div>
                                         </div>
 
-                                        <div class="form-group">
-                                            <div class="col-lg-10 col-lg-offset-3">
+                                    {% endif %}
+                                        <br>
+                                        <div class="row">
+                                            <div style="margin: 0 auto">
 
-                                                {% if comparison_number != 0 %}
-                                                    <button class="btn btn-dark" id="tofirst{{ comparison_number }}" type="button"><span class="fa fa-arrow-left"></span> To first</button>
-                                                    <button class="btn btn-warning" id="back{{ comparison_number }}" type="button"><span class="fa fa-arrow-left"></span> Back</button>
+                                                {% if comparison_number != -1 %}
+                                                    <button class="btn btn-secondary align-center" id="toinstructions{{ comparison_number }}" type="button"><span class="fa fa-arrow-left"></span>
+                                                        To the instructions</button>
                                                 {% endif %}
 
-                                                {% if comparison_number != pairwise_comparison_count - 1 %}
-                                                    <button class="btn btn-primary" id="next{{ comparison_number }}" type="button">Next <span class="fa fa-arrow-right"></span></button>
+                                                {% if comparison_number > 0 %}
+                                                    <button class="btn btn-dark" id="tofirst{{ comparison_number }}" type="button"><span class="fa fa-arrow-left"></span>To first question</button>
+                                                    <button class="btn btn-warning" id="back{{ comparison_number }}" type="button"><span class="fa fa-arrow-left"></span>Previous question</button>
+                                                {% endif %}
+
+                                                {% if comparison_number != pairwise_comparison_count - 1 and comparison_number != -1 %}
+                                                    <button class="btn btn-primary" id="next{{ comparison_number }}" type="button">Next question<span class="fa fa-arrow-right"></span></button>
+                                                {% elif comparison_number == -1 %}
+                                                    <button class="btn btn-primary" id="next{{ comparison_number }}" type="button">Next<span class="fa fa-arrow-right"></span></button>
                                                 {% else %}
+                                                    {# For the last question, we want to have the submit button. #}
                                                     <input class="btn btn-primary" id="next{{ comparison_number }}" type = "submit" value = "Submit"/>
                                                 {% endif %}
                                             </div>
@@ -161,9 +163,9 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $(".frmdiv").hide();
-        $("#group0").show();
-        {% for key in range(pairwise_comparison_count) %}
-            {%if  key != 0 %}
+        $("#group-1").show();
+        {% for key in range(-1, pairwise_comparison_count) %}
+            {%if  key > 0 %}
                 $("#back{{ key }}").click(function() {
                     $(".frmdiv").hide("fast");
                     $("#group{{ key - 1 }}").show("fast");
@@ -172,6 +174,13 @@
                 $("#tofirst{{ key }}").click(function () {
                     $(".frmdiv").hide("fast");
                     $("#group0").show("fast");
+                    $(document).scrollTop( $("#recoms").offset().top );
+                });
+            {% endif %}
+            {% if key != -1 %}
+                $("#toinstructions{{ key }}").click(function() {
+                    $(".frmdiv").hide("fast");
+                    $("#group-1").show("fast");
                     $(document).scrollTop( $("#recoms").offset().top );
                 });
             {% endif %}

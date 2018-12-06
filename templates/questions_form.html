@@ -6,141 +6,143 @@
 
 {% block navbar %}
     <li class="nav-item">
-        <a class="nav-link js-scroll-trigger" href="#howto">How To</a>
-    </li>
-    <li>
-        <a class="nav-link js-scroll-trigger" href="#questions">Questions</a>
+        <a class="nav-link js-scroll-trigger" href="#questionnaire">Questions</a>
     </li>
 {% endblock %}
 
 {% block body %}
 
-    <header class="bg-primary text-white">
+    <header class="bg-light text-dark">
       <div class="container text-center">
         <h1>Welcome to the Wikipedia entry questionnaire!</h1>
         <p class="lead">A questionnaire aiming to learn about your interests in Wikipedia.</p>
       </div>
     </header>
 
-    <section id="howto">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 mx-auto">
-                    This questionnaire contains {{ n_q }} questions, which attempt to capture your topics of interest,
-                    based on which we will provide you with article recommendations. It is then followed by a feedback
-                    survey, in which we will ask you to compare 6 pairs of article lists, each list containing a few recommended articles.
-                    The estimated completion time for the questionnaire and its feedback survey is about 32 minutes; 20 minutes for the
-                    questionnaire and 12 minutes for the feedback survey.
-                    A few important points on the questionnaire:<br>
-                    <ul>
-                        <li>Please have cookies enabled. If you do not have them enabled, please enable them
-                        and refresh this page.</li>
-                        <li>Each question in the questionnaire asks you about the set you prefer among two sets of articles (set A and set B) and how great your preference is.
-                        There are 7 answers possible, ranging from "A, greatly" to "Indifferent" to "B, greatly". Only a single answer is possible for each question.</li>
-                        <li>For each set of articles, in addition to their names and clickable links, we have provided you with a word cloud consisting of
-                        its most important words. We show you these words to help you assess what each set of articles is about.</li>
-                        <li>When stating your preference between a pair of article sets, bear in mind that if you state a great preference for a set,
-                        you are much more likely to see articles like those in that set in your recommendations. Therefore, use the "greatly prefer" options
-                        to indicate your absolute favourite topics and do not use them simply because you dislike the other set.</li>
-                        <li>Please answer all {{ n_q }} questions. Because we're evaluating our system
-                        based on this, we need full information on how users interact with each question. The
-                        form cannot be submitted without having chosen an answer for each question.</li>
-                        <li>Once you have answered all the questions, we kindly ask you to also enter your username. Your data will only be used
-                        for the purposes of this research project, and it will remain confidential and will not be disclosed to anyone.</li>
-                        <li>Once you have submitted the questionnaire, we record your answers and generate several sets
-                        of recommendations for you, which we will then ask you to compare and rate.
-                        The generation of those recommendations might take a few seconds, so we thank you
-                        in advance for your patience while the recommendations are being computed.</li>
-                        <li>The feedback survey contains 6 pairs of article lists. Each list consists of articles that we recommend to you.
-                        The feedback we ask you for, is to answer three questions for each pair of article lists, comparing them in a fashion
-                        similar to the questionnaire on this page.</li>
-                        <li>We would like to remind you that the privacy statement for this study may be found
-                            <a href="https://foundation.wikimedia.org/wiki/Elicit_New_Editor_Interests_Survey_Privacy_Statement">here</a>.</li>
-                        <li>This page is best viewed on non-mobile platforms.</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+{#    <section id="howto">#}
+{#        <div class="container">#}
+{#            #}
+{#        </div>#}
+{#    </section>#}
 
-    <section id="questions">
+    <section id="questionnaire">
       <div class="container">
         <div class="row">
           <div class="col-10 mx-auto">
                     <form name="questionnaire" action = "/result" method = "POST" onsubmit="submission_check_survey();">
-                        {% for key in range(n_q) %}
+                        {% for key in range(-1, n_q + 1) %}
 
                             <div id="group{{ key }}" class="frmdiv">
-                            <fieldset>
+                                <fieldset>
 
-                                {% set question_value = questions[key|string] %}
+                                {% if key == -1 %}
+                                    <div class="row">
+                                        <div class="col-lg-8 mx-auto">
+                                            This questionnaire is divided into two parts. In the first part, we ask you {{ n_q }} questions which attempt to capture your topics of interest.
+                                            In the second part, we ask you 6 questions to assess how well we have learned your topics of interest through the qeustions asked in the first part.
+                                            The estimated completion time for this questionnaire is about 32 minutes.
 
+                                            A few important points on the questionnaire:<br><br>
+                                            <ul>
+                                                <li>Please answer all {{ n_q }} questions. Because we're evaluating our system
+                                                    based on this, we need full information on how users interact with each question. The
+                                                    form cannot be submitted without having chosen an answer for each question.</li><br>
+                                                <li>Once you submit the first part, please wait a few moments while we generate recommendations for you.</li><br>
+                                                <li>We would like to remind you that the privacy statement for this study may be found
+                                                    <a href="https://foundation.wikimedia.org/wiki/Elicit_New_Editor_Interests_Survey_Privacy_Statement">here</a>.</li><br>
+                                                <li>This page is best viewed on desktops.</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                {% elif key >= 0 and key <= n_q - 1 %}
 
-                                <h2 id="q{{ key }}">Question {{ key + 1 }}: Review the two sets of articles A and B, and answer the following question:
-                                    Which set of articles contains more articles that you would be interested in <b>editing</b>, and how much do you prefer that set? Choose "Indifferent" if neither of these sets interests you.</h2>
-                                <div class="row">
-                                    <div class="col left mx-auto">
-                                        <b>Set A:</b> <br>
-                                        <ul>
-                                        {% for x in question_value['top'] %}
-                                            <li><a href="https://en.wikipedia.org/wiki/{{ x }}" target="_blank">{{ x }}</a> </li>
-                                        {% endfor %}
-                                        </ul>
+                                    {% set question_value = questions[key|string] %}
+
+                                    <h5>For each question in this section please review the two sets lists of articles, and say which one
+                                        you would be most interested in editing using the options at the bottom.
+                                        Choose "Neither A nor B" if you do not have a preference at all. The word cloud below each list contains key words from the articles in that list,
+                                        to help you assess what those articles are about.</h5>
+                                    <p id="q{{ key }}"><b>Question {{ key + 1 }}</b></p>
+                                    <div class="row">
                                         <div class="col left mx-auto">
-                                            <b>Word cloud for most important words in set A:</b> <br><br>
-                                            <img src="{{ cloud_dir }}{{ key }}_top.png">
+                                            <b>List A:</b> <br>
+                                            <ul>
+                                            {% for x in question_value['top'] %}
+                                                <li><a href="https://en.wikipedia.org/wiki/{{ x }}" target="_blank">{{ x }}</a> </li>
+                                            {% endfor %}
+                                            </ul>
+                                            <div class="col left mx-auto">
+                                                <b>Word cloud for most important words in list A:</b> <br><br>
+                                                <img src="{{ cloud_dir }}{{ key }}_top.png">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col right mx-auto">
-                                        <b>Set B:</b> <br>
-                                        <ul>
-                                        {% for x in question_value['bottom'] %}
-                                            <li><a href="https://en.wikipedia.org/wiki/{{ x }}" target="_blank">{{ x }}</a></li>
-                                        {% endfor %}
-                                        </ul>
                                         <div class="col right mx-auto">
-                                            <b>Word cloud for most important words in set B:</b> <br><br>
-                                            <img src="{{ cloud_dir }}{{ key }}_bottom.png">
+                                            <b>List B:</b> <br>
+                                            <ul>
+                                            {% for x in question_value['bottom'] %}
+                                                <li><a href="https://en.wikipedia.org/wiki/{{ x }}" target="_blank">{{ x }}</a></li>
+                                            {% endfor %}
+                                            </ul>
+                                            <div class="col right mx-auto">
+                                                <b>Word cloud for most important words in list B:</b> <br><br>
+                                                <img src="{{ cloud_dir }}{{ key }}_bottom.png">
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-
-                                <h4>Your answer:</h4>
-                                <div class="row">
-                                        <div class="mr-5"><input type="radio" id="r{{ key }}1" value="3" name="q_group_{{ key }}"><br><label for="r{{ key }}1">A, greatly</label></div>
-                                        <div class="mr-5"><input type="radio" id="r{{ key }}2" value="2" name="q_group_{{ key }}"><br><label for="r{{ key }}2">A, moderately</label></div>
-                                        <div class="mr-5"><input type="radio" id="r{{ key }}3" value="1" name="q_group_{{ key }}"><br><label for="r{{ key }}3">A, slightly</label></div>
-                                        <div class="mr-5"><input type="radio" id="r{{ key }}4" value="0" name="q_group_{{ key }}"><br><label for="r{{ key }}4">Indifferent</label></div>
-                                        <div class="mr-5"><input type="radio" id="r{{ key }}5" value="-1" name="q_group_{{ key }}"><br><label for="r{{ key }}5">B, slightly</label></div>
-                                        <div class="mr-5"><input type="radio" id="r{{ key }}6" value="-2" name="q_group_{{ key }}"><br><label for="r{{ key }}6">B, moderately</label></div>
-                                        <div class="mr-5"><input type="radio" id="r{{ key }}7" value="-3" name="q_group_{{ key }}"><br><label for="r{{ key }}7">B, greatly</label></div>
-
-                                </div>
-                                {% if key == n_q - 1 %}
-                                    <div class="mx-auto">
-                                        <h4 style="color: orangered">Before you submit the questionnaire...</h4>
-                                        <input class="form-text" type="text" name="name_field" id="name_field" placeholder="Please enter your Wikipedia username here."/>
-                                    </div><br>
-                                {% endif %}
-                                <div class="form-group">
-                                    <div class="col-lg-10 col-lg-offset-3">
-
-                                        {% if key != 0 %}
-                                            <button class="btn btn-dark" id="tofirst{{ key }}" type="button"><span class="fa fa-arrow-left"></span>To first question</button>
-                                            <button class="btn btn-warning" id="back{{ key }}" type="button"><span class="fa fa-arrow-left"></span>Previous question</button>
-                                        {% endif %}
-
-                                        {% if key != n_q - 1 %}
-                                            <button class="btn btn-primary" id="next{{ key }}" type="button">Next question<span class="fa fa-arrow-right"></span></button>
-{#                                            <button class="btn btn-dark" id="tolast{{ key }}" type="button"><span class="fa fa-arrow-left"></span> To last</button>#}
-                                        {% else %}
-                                            <input class="btn btn-primary" id="next{{ key }}" type = "submit" value = "Submit"/>
-                                        {% endif %}
+                                    <br>
+                                    <p>Please choose your preference among the two lists. Bear in mind that if you state a great preference for a list,
+                                        you are much more likely to see articles like those in that list in your recommendations.
+                                        Therefore, use the "greatly prefer" options to indicate your absolute favourite topics and
+                                        do not use them simply because you dislike the other set.</p><br>
+                                    <div class="row">
+                                            <div class="col mr-4"><input type="radio" id="r{{ key }}1" value="3" name="q_group_{{ key }}"><br><label for="r{{ key }}1">A, greatly</label></div>
+                                            <div class="col mr-4"><input type="radio" id="r{{ key }}2" value="2" name="q_group_{{ key }}"><br><label for="r{{ key }}2">A, moderately</label></div>
+                                            <div class="col mr-4"><input type="radio" id="r{{ key }}3" value="1" name="q_group_{{ key }}"><br><label for="r{{ key }}3">A, slightly</label></div>
+                                            <div class="col mr-4"><input type="radio" id="r{{ key }}4" value="0" name="q_group_{{ key }}"><br><label for="r{{ key }}4">Neither A nor B.</label></div>
+                                            <div class="col mr-4"><input type="radio" id="r{{ key }}5" value="-1" name="q_group_{{ key }}"><br><label for="r{{ key }}5">B, slightly</label></div>
+                                            <div class="col mr-4"><input type="radio" id="r{{ key }}6" value="-2" name="q_group_{{ key }}"><br><label for="r{{ key }}6">B, moderately</label></div>
+                                            <div class="col mr-4"><input type="radio" id="r{{ key }}7" value="-3" name="q_group_{{ key }}"><br><label for="r{{ key }}7">B, greatly</label></div>
                                     </div>
-                                </div>
+                                {% else %}
+                                    {# This is the case where key == n_q and we have the submit button #}
+                                    <div class="mx-auto row">
+                                        <h4 style="color: royalblue">Before you submit the questionnaire...</h4><br>
+                                        <p>We kindly ask you to also enter your Wikipedia <i>username</i>. This is the username you enter on the Wikipedia login page,
+                                            not the ending of the URL of your user page. For example, enter SomeUsername, and not User:SomeUsername.
+                                            Your data will only be used for the purposes of this research project, and will remain confidential.</p>
+                                    </div>
+                                    <div class="row"><div style="margin: 0 auto">
+                                        <input class="form-text center" type="text" name="name_field" id="name_field" placeholder="Your Wikipedia Username Here"/>
+                                    </div></div><br>
+                                {% endif %}
+                                    <div class="row">
+                                        <div style="margin: 0 auto">
 
-                            </fieldset>
+                                            {% if key > 0 %}
+                                                <button class="btn btn-secondary center" id="toinstructions{{ key }}" type="button"><span class="fa fa-arrow-left"></span>To the instructions</button>
+                                                <button class="btn btn-dark" id="tofirst{{ key }}" type="button"><span class="fa fa-arrow-left"></span>To first question</button>
+                                                <button class="btn btn-warning" id="back{{ key }}" type="button"><span class="fa fa-arrow-left"></span>Previous question</button>
+                                            {% endif %}
+                                            {% if key == 0 %}
+                                                <button class="btn btn-secondary" id="toinstructions{{ key }}" type="button"><span class="fa fa-arrow-left"></span>To the instructions</button>
+                                            {% endif %}
+
+                                            {% if key < n_q - 1 and key != -1 %}
+                                                <button class="btn btn-primary" id="next{{ key }}" type="button">Next question<span class="fa fa-arrow-right"></span></button>
+    {#                                            <button class="btn btn-dark" id="tolast{{ key }}" type="button"><span class="fa fa-arrow-left"></span> To last</button>#}
+                                            {% elif key == n_q - 1 %}
+                                                <button class="btn btn-primary" id="next{{ key }}" type="button">Next<span class="fa fa-arrow-right"></span></button>
+                                            {% elif key == -1 %}
+                                                <button class="btn btn-primary center" id="next{{ key }}" type="button">To the first question<span class="fa fa-arrow-right"></span></button>
+                                            {% else %}
+                                                {# This is the case where key == n_q and we have the submit button #}
+                                                <input class="btn btn-primary" id="next{{ key }}" type = "submit" value = "Submit"/>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                </fieldset>
                             </div>
 
 
@@ -160,9 +162,9 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $(".frmdiv").hide();
-        $("#group0").show();
-        {% for key in range(n_q) %}
-            {%if  key != 0 %}
+        $("#group-1").show();
+        {% for key in range(-1, n_q + 1) %}
+            {%if  key > 0 %}
                 $("#back{{ key }}").click(function() {
                     $(".frmdiv").hide("fast");
                     $("#group{{ key - 1 }}").show("fast");
@@ -174,7 +176,14 @@
                     $(document).scrollTop( $("#questions").offset().top );
                 });
             {% endif %}
-            {% if key != n_q - 1 %}
+            {% if key != -1 %}
+                $("#toinstructions{{ key }}").click(function() {
+                    $(".frmdiv").hide("fast");
+                    $("#group-1").show("fast");
+                    $(document).scrollTop( $("#questions").offset().top );
+                });
+            {% endif %}
+            {% if key != n_q %}
                 $("#next{{ key }}").click(function() {
                     $(".frmdiv").hide("fast");
                     $("#group{{ key + 1 }}").show("fast");
