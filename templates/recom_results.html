@@ -42,7 +42,8 @@
                                         {% set recom_list_A = recoms_dict[current_pair_indices[0]] %}
                                         {% set recom_list_B = recoms_dict[current_pair_indices[1]] %}
 
-                                        <h5>Please look at the two lists of recommendations below, and answer the questions that follow:</h5>
+                                        <h5>Question {{ comparison_number + 1 }} of {{ pairwise_comparison_count }}: Please look at the two lists of recommendations below,
+                                            and answer the questions that follow:</h5>
                                         <div class="row">
                                             <div class="col left mx-auto">
                                                 <b>Recommendation list A:</b> <br>
@@ -125,12 +126,11 @@
                                             <div style="margin: 0 auto">
 
                                                 {% if comparison_number != -1 %}
-                                                    <button class="btn btn-secondary align-center" id="toinstructions{{ comparison_number }}" type="button"><span class="fa fa-arrow-left"></span>
+                                                    <button class="btn btn-link align-center" id="toinstructions{{ comparison_number }}" type="button"><span class="fa fa-arrow-left"></span>
                                                         To the instructions</button>
                                                 {% endif %}
 
                                                 {% if comparison_number > 0 %}
-                                                    <button class="btn btn-dark" id="tofirst{{ comparison_number }}" type="button"><span class="fa fa-arrow-left"></span>To first question</button>
                                                     <button class="btn btn-warning" id="back{{ comparison_number }}" type="button"><span class="fa fa-arrow-left"></span>Previous question</button>
                                                 {% endif %}
 
@@ -169,11 +169,6 @@
                 $("#back{{ key }}").click(function() {
                     $(".frmdiv").hide("fast");
                     $("#group{{ key - 1 }}").show("fast");
-                    $(document).scrollTop( $("#recoms").offset().top );
-                });
-                $("#tofirst{{ key }}").click(function () {
-                    $(".frmdiv").hide("fast");
-                    $("#group0").show("fast");
                     $(document).scrollTop( $("#recoms").offset().top );
                 });
             {% endif %}

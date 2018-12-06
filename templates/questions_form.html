@@ -40,7 +40,7 @@
                                         <div class="col-lg-8 mx-auto">
                                             This questionnaire is divided into two parts. In the first part, we ask you {{ n_q }} questions which attempt to capture your topics of interest.
                                             In the second part, we ask you 6 questions to assess how well we have learned your topics of interest through the qeustions asked in the first part.
-                                            The estimated completion time for this questionnaire is about 32 minutes.
+                                            The estimated completion time for this questionnaire is about 30 minutes.
 
                                             A few important points on the questionnaire:<br><br>
                                             <ul>
@@ -62,7 +62,7 @@
                                         you would be most interested in editing using the options at the bottom.
                                         Choose "Neither A nor B" if you do not have a preference at all. The word cloud below each list contains key words from the articles in that list,
                                         to help you assess what those articles are about.</h5>
-                                    <p id="q{{ key }}"><b>Question {{ key + 1 }}</b></p>
+                                    <p id="q{{ key }}"><h5>Question {{ key + 1 }} of {{ n_q }}</h5></p>
                                     <div class="row">
                                         <div class="col left mx-auto">
                                             <b>List A:</b> <br>
@@ -72,7 +72,7 @@
                                             {% endfor %}
                                             </ul>
                                             <div class="col left mx-auto">
-                                                <b>Word cloud for most important words in list A:</b> <br><br>
+                                                <b>Word cloud of the most important words in list A:</b> <br><br>
                                                 <img src="{{ cloud_dir }}{{ key }}_top.png">
                                             </div>
                                         </div>
@@ -84,7 +84,7 @@
                                             {% endfor %}
                                             </ul>
                                             <div class="col right mx-auto">
-                                                <b>Word cloud for most important words in list B:</b> <br><br>
+                                                <b>Word cloud of the most important words in list B:</b> <br><br>
                                                 <img src="{{ cloud_dir }}{{ key }}_bottom.png">
                                             </div>
                                         </div>
@@ -119,13 +119,12 @@
                                     <div class="row">
                                         <div style="margin: 0 auto">
 
-                                            {% if key > 0 %}
-                                                <button class="btn btn-secondary center" id="toinstructions{{ key }}" type="button"><span class="fa fa-arrow-left"></span>To the instructions</button>
-                                                <button class="btn btn-dark" id="tofirst{{ key }}" type="button"><span class="fa fa-arrow-left"></span>To first question</button>
-                                                <button class="btn btn-warning" id="back{{ key }}" type="button"><span class="fa fa-arrow-left"></span>Previous question</button>
+                                            {% if key > -1 %}
+                                                <button class="btn btn-link" id="toinstructions{{ key }}" type="button"><span class="fa fa-arrow-left"></span>To the instructions</button>
                                             {% endif %}
-                                            {% if key == 0 %}
-                                                <button class="btn btn-secondary" id="toinstructions{{ key }}" type="button"><span class="fa fa-arrow-left"></span>To the instructions</button>
+
+                                            {% if key > 0 %}
+                                                <button class="btn btn-warning" id="back{{ key }}" type="button"><span class="fa fa-arrow-left"></span>Previous question</button>
                                             {% endif %}
 
                                             {% if key < n_q - 1 and key != -1 %}
@@ -134,7 +133,7 @@
                                             {% elif key == n_q - 1 %}
                                                 <button class="btn btn-primary" id="next{{ key }}" type="button">Next<span class="fa fa-arrow-right"></span></button>
                                             {% elif key == -1 %}
-                                                <button class="btn btn-primary center" id="next{{ key }}" type="button">To the first question<span class="fa fa-arrow-right"></span></button>
+                                                <button class="btn btn-primary" id="next{{ key }}" type="button">To the first question<span class="fa fa-arrow-right"></span></button>
                                             {% else %}
                                                 {# This is the case where key == n_q and we have the submit button #}
                                                 <input class="btn btn-primary" id="next{{ key }}" type = "submit" value = "Submit"/>
@@ -168,11 +167,6 @@
                 $("#back{{ key }}").click(function() {
                     $(".frmdiv").hide("fast");
                     $("#group{{ key - 1 }}").show("fast");
-                    $(document).scrollTop( $("#questions").offset().top );
-                });
-                $("#tofirst{{ key }}").click(function () {
-                    $(".frmdiv").hide("fast");
-                    $("#group0").show("fast");
                     $(document).scrollTop( $("#questions").offset().top );
                 });
             {% endif %}
