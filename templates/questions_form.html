@@ -44,13 +44,13 @@
 
                                             A few important points on the questionnaire:<br><br>
                                             <ul>
-                                                <li>Please answer all {{ n_q }} questions. Because we're evaluating our system
-                                                    based on this, we need full information on how users interact with each question. The
+                                                <li>We need your responses to all {{ n_q }} questions. The
                                                     form cannot be submitted without having chosen an answer for each question.</li><br>
-                                                <li>Once you submit the first part, please wait a few moments while we generate recommendations for you.</li><br>
+                                                <li>Once you submit your responses to the first part of this questionnaire,
+                                                    please wait a few moments while we generate recommendations for you.</li><br>
                                                 <li>We would like to remind you that the privacy statement for this study may be found
                                                     <a href="https://foundation.wikimedia.org/wiki/Elicit_New_Editor_Interests_Survey_T2_Privacy_Statement" target="_blank">here</a>.</li><br>
-                                                <li>This page is best viewed on desktops.</li>
+                                                <li>This page is best viewed on desktop.</li>
                                             </ul>
                                         </div>
                                     </div>
@@ -58,7 +58,7 @@
 
                                     {% set question_value = questions[key|string] %}
 
-                                    <h5>For each question in this section please review the two sets lists of articles, and say which one
+                                    <h5>For each question in this section please review the two lists of articles, and indicate which one
                                         you would be most interested in editing using the options at the bottom.
                                         Choose "Neither A nor B" if you do not have a preference at all. The word cloud below each list contains key words from the articles in that list,
                                         to help you assess what those articles are about.</h5>
@@ -95,26 +95,34 @@
                                         you are much more likely to see articles like those in that list in your recommendations.
                                         Therefore, use the "greatly prefer" options to indicate your absolute favourite topics and
                                         do not use them simply because you dislike the other set.</p><br>
-                                    <div class="row">
-                                            <div class="col mr-4"><input type="radio" id="r{{ key }}1" value="3" name="q_group_{{ key }}"><br><label for="r{{ key }}1">A, greatly</label></div>
-                                            <div class="col mr-4"><input type="radio" id="r{{ key }}2" value="2" name="q_group_{{ key }}"><br><label for="r{{ key }}2">A, moderately</label></div>
-                                            <div class="col mr-4"><input type="radio" id="r{{ key }}3" value="1" name="q_group_{{ key }}"><br><label for="r{{ key }}3">A, slightly</label></div>
-                                            <div class="col mr-4"><input type="radio" id="r{{ key }}4" value="0" name="q_group_{{ key }}"><br><label for="r{{ key }}4">Neither A nor B.</label></div>
-                                            <div class="col mr-4"><input type="radio" id="r{{ key }}5" value="-1" name="q_group_{{ key }}"><br><label for="r{{ key }}5">B, slightly</label></div>
-                                            <div class="col mr-4"><input type="radio" id="r{{ key }}6" value="-2" name="q_group_{{ key }}"><br><label for="r{{ key }}6">B, moderately</label></div>
-                                            <div class="col mr-4"><input type="radio" id="r{{ key }}7" value="-3" name="q_group_{{ key }}"><br><label for="r{{ key }}7">B, greatly</label></div>
+                                    <div class="mx-auto">
+                                            <div class="mx-auto"><input type="radio" id="r{{ key }}1" value="3" name="q_group_{{ key }}">
+                                                <label for="r{{ key }}1">Greatly prefer A</label></div><br>
+                                            <div class="mx-auto"><input type="radio" id="r{{ key }}2" value="2" name="q_group_{{ key }}">
+                                                <label for="r{{ key }}2">Moderately prefer A</label></div><br>
+                                            <div class="mx-auto"><input type="radio" id="r{{ key }}3" value="1" name="q_group_{{ key }}">
+                                                <label for="r{{ key }}3">Slightly prefer A</label></div><br>
+                                            <div class="mx-auto"><input type="radio" id="r{{ key }}4" value="0" name="q_group_{{ key }}">
+                                                <label for="r{{ key }}4">Neither A nor B.</label></div><br>
+                                            <div class="mx-auto"><input type="radio" id="r{{ key }}5" value="-1" name="q_group_{{ key }}">
+                                                <label for="r{{ key }}5">Slightly prefer B</label></div><br>
+                                            <div class="mx-auto"><input type="radio" id="r{{ key }}6" value="-2" name="q_group_{{ key }}">
+                                                <label for="r{{ key }}6">Moderately prefer B</label></div><br>
+                                            <div class="mx-auto"><input type="radio" id="r{{ key }}7" value="-3" name="q_group_{{ key }}">
+                                                <label for="r{{ key }}7">Greatly prefer B</label></div><br>
                                     </div>
                                 {% else %}
                                     {# This is the case where key == n_q and we have the submit button #}
                                     <div class="mx-auto row">
                                         <h4 style="color: royalblue">Before you submit the questionnaire...</h4><br>
-                                        <p>We kindly ask you to also enter your Wikipedia <i>username</i>. This is the username you enter on the Wikipedia login page,
-                                            not the ending of the URL of your user page. For example, enter SomeUsername, and not User:SomeUsername.
+                                        <p>Please enter your Wikipedia <i>username</i> in the box below. This is the
+                                            username you enter on the Wikipedia login page.
                                             Your data will only be used for the purposes of this research project, and will remain confidential.</p>
                                     </div>
                                     <div class="row"><div style="margin: 0 auto">
                                         <input class="form-text center" type="text" name="name_field" id="name_field" placeholder="Your Wikipedia Username Here"/>
                                     </div></div><br>
+                                    <p>Click on the "Submit" button below and wait a few seconds for your recommendations to be generated. Thank you for your patience!</p>
                                 {% endif %}
                                     <div class="row">
                                         <div style="margin: 0 auto">
