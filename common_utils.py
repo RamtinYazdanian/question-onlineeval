@@ -28,18 +28,18 @@ def add_slash_to_dir(dir_name):
 def invert_dict(d):
     return {d[k]: k for k in d}
 
-"""
-Assuming best_docs is a list of document indices or ids sorted in descending order of recommendation score, 
-picks recom_count recommendations that are not members of documents_to_avoid, and returns a list of dictionaries 
-containing doc ids and names. If doc_index_to_id is None, best_docs is assumed to contain ids; otherwise, it's assumed 
-to contain indices.
-The optional 'diversify' argument tells the function whether to provide a straight-up list of highest-scoring documents 
-(when diversify == -1), or to perform diversification by taking a larger set of articles, clustering them, and then 
-returning the top-scoring ones from each cluster.
-"""
-
 def get_top_k_q_based(best_docs, recom_count, doc_id_to_name, documents_to_avoid,
                       doc_index_to_id, diversify=-1, doc_latent=None):
+    """
+    Assuming best_docs is a list of document indices or ids sorted in descending order of recommendation score,
+    picks recom_count recommendations that are not members of documents_to_avoid, and returns a list of dictionaries
+    containing doc ids and names. If doc_index_to_id is None, best_docs is assumed to contain ids; otherwise, it's assumed
+    to contain indices.
+    The optional 'diversify' argument tells the function whether to provide a straight-up list of highest-scoring documents
+    (when diversify == -1), or to perform diversification by taking a larger set of articles, clustering them, and then
+    returning the top-scoring ones from each cluster.
+    """
+
     # This check is to make sure that we don't end up with too few documents because some of them were in
     # documents_to_avoid.
     if diversify != -1 and doc_latent is not None:
@@ -62,11 +62,18 @@ def get_top_k_q_based(best_docs, recom_count, doc_id_to_name, documents_to_avoid
 
     return recom_results
 
-def get_top_k_cf(best_docs, recom_count, doc_id_to_name, documents_to_avoid,
-                      doc_index_to_id):
-    docs_list = [x for x in best_docs if doc_index_to_id[x] not in documents_to_avoid]
-    shuffle(docs_list)
-    docs_list = docs_list[:recom_count]
+
+def get_top_k_cf(best_docs, recom_count, doc_id_to_name, documents_to_avoid, doc_id_to_index, doc_latent):
+    """
+    Assumes that the best_docs list consists of ids, unlike the q-based one which assumed indices.
+    Uses the diversification scheme.
+    """
+    doc_index_to_id = invert_dict(doc_id_to_index)
+    # Converting the ids to indices for the diversification function.
+    docs_list = [doc_id_to_index[x] for x in best_docs if x not in documents_to_avoid]
+    # Diversifying...
+    docs_list = diversity_based_clustering(docs_list, doc_latent, recom_count)
+    # Now converting the indices back into ids and then names.
     recom_results = [doc_id_to_name[doc_index_to_id[x]] for x in docs_list]
     return recom_results
 

@@ -62,7 +62,8 @@ def recom_result():
 
         # The dictionaries needed for pretty much every set of documents
         doc_id_to_index = json.load(open(settings['article_id_to_index'], 'r'))
-        doc_index_to_id = {int(doc_id_to_index[x]):int(x) for x in doc_id_to_index}
+        doc_id_to_index = {int(x):int(doc_id_to_index[x]) for x in doc_id_to_index}
+        doc_index_to_id = invert_dict(doc_id_to_index)
         # The following file is generated using get_id_name_dict in common_utils.py of the original repo.
         doc_id_to_name = json.load(open(settings['article_id_to_name'], 'r'))
         doc_id_to_name = {int(x):doc_id_to_name[x] for x in doc_id_to_name}
@@ -90,9 +91,9 @@ def recom_result():
             all_cf_personal_recommendations = json.load(open(settings['cf_recoms'], mode='r'), encoding='latin1')
             if user_name in all_cf_personal_recommendations:
                 n_baselines = 3
-                cf_personal_recoms = get_top_k_cf(all_cf_personal_recommendations[user_name],
+                cf_personal_recoms = get_top_k_cf([int(x) for x in all_cf_personal_recommendations[user_name]],
                                         recom_count // n_baselines, doc_id_to_name, documents_to_avoid,
-                                        doc_index_to_id=doc_index_to_id)
+                                                  doc_id_to_index, doc_latent)
 
                 random.shuffle(cf_personal_recoms)
             else:
