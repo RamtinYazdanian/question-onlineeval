@@ -96,6 +96,14 @@ def recom_result():
                                                   doc_id_to_index, doc_latent)
 
                 random.shuffle(cf_personal_recoms)
+            elif user_name.strip() in all_cf_personal_recommendations:
+                user_name = user_name.strip()
+                n_baselines = 3
+                cf_personal_recoms = get_top_k_cf([int(x) for x in all_cf_personal_recommendations[user_name]],
+                                                  recom_count // n_baselines, doc_id_to_name, documents_to_avoid,
+                                                  doc_id_to_index, doc_latent)
+
+                random.shuffle(cf_personal_recoms)
             else:
                 cf_personal_recoms = None
                 n_baselines = 2
