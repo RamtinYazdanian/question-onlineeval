@@ -104,7 +104,8 @@
             if (document.getElementById("name_field") != null) {
                 var username_val = document.getElementById("name_field").value;
                 if (username_val === "") {
-                    alert("Please enter your Wikipedia username!");
+                    {#alert("Please enter your Wikipedia username!");#}
+                    alert("Please enter your participation token!");
                     return false;
                 }
                 //var emailFilter = /^([a-zA-Z0-9_.-])+@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;

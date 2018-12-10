@@ -1,6 +1,7 @@
 {"n_q":20, "answer_levels":7, "recom_count": 30, "questions":"static/joint/questions.json",
   "edit_pop_list":"static/joint/top-edited-pages.csv", "view_pop_list":"static/joint/view_pop_list.json",
-  "doc_latent":"static/joint/doc_latent.pkl", "cf_recoms": "static/joint/cf_recoms_id.json", "cloud_dir":"static/joint/clouds/",
+  "doc_latent":"static/joint/doc_latent.pkl", "cf_recoms": "static/joint/cf_recoms_id.json",
+  "tokens_to_usernames":"static/joint/token_to_name_map.json", "cloud_dir":"static/joint/clouds/",
   "word_cloud":"static/joint/word_cloud.json", "output_dir":"results/",
   "question_doc_ids":"static/joint/id_avoid_list.pkl", "question_doc_names":"static/joint/name_avoid_list.pkl",
   "article_id_to_index":"static/doc_id_index.json", "article_id_to_name":"static/docid_docname.json",

@@ -34,7 +34,20 @@ def recom_result():
         print(result)
         answers = {int(x.strip('u').strip('\'').strip('q_group_')):int(result[x].strip('u').strip('\''))
                                                                     for x in result if 'q_group_' in x}
+
+        # There are two modes: If the attribute "tokens_to_usernames" doesn't exist in the settings,
+        # we proceed as normal. Otherwise, the 'user_name' is treated as a token which has to be mapped
+        # to the actual username using that json file.
+        token_to_username = None
+        if 'tokens_to_usernames' in settings:
+            token_to_username = json.load(open(settings['tokens_to_usernames'], 'r'))
+
         user_name = result['name_field']
+        if token_to_username is not None:
+            user_name = token_to_username.get(user_name, None)
+
+        if user_name is None:
+            user_name = 'THIS_USER_WAS_NOT_SUPPOSED_TO_BE_IN_THE_STUDY_CAUSE_NO_TOKEN_YEAH_SUCKS'
 
         answers_vector = np.zeros((n_q, 1))
         for x in answers:
@@ -89,14 +102,14 @@ def recom_result():
 
         if settings.get('cf_recoms', None) is not None:
             all_cf_personal_recommendations = json.load(open(settings['cf_recoms'], mode='r'), encoding='latin1')
-            if user_name in all_cf_personal_recommendations:
+            if user_name is not None and user_name in all_cf_personal_recommendations:
                 n_baselines = 3
                 cf_personal_recoms = get_top_k_cf([int(x) for x in all_cf_personal_recommendations[user_name]],
                                         recom_count // n_baselines, doc_id_to_name, documents_to_avoid,
                                                   doc_id_to_index, doc_latent)
 
                 random.shuffle(cf_personal_recoms)
-            elif user_name.strip() in all_cf_personal_recommendations:
+            elif user_name is not None and user_name.strip() in all_cf_personal_recommendations:
                 user_name = user_name.strip()
                 n_baselines = 3
                 cf_personal_recoms = get_top_k_cf([int(x) for x in all_cf_personal_recommendations[user_name]],

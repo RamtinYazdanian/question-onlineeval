@@ -116,12 +116,18 @@
                                     {# This is the case where key == n_q and we have the submit button #}
                                     <div class="mx-auto row">
                                         <h4 style="color: royalblue">Before you submit the questionnaire...</h4><br>
-                                        <p>Please enter your Wikipedia <i>username</i> in the box below. This is the
-                                            username you enter on the Wikipedia login page.
-                                            Your data will only be used for the purposes of this research project, and will remain confidential.</p>
+{#                                        <p>Please enter your Wikipedia <i>username</i> in the box below. This is the#}
+{#                                            username you enter on the Wikipedia login page.#}
+{#                                            Your data will only be used for the purposes of this research project, and will remain confidential.</p>#}
+                                            <p>Please enter the "participation token" given to you in the questionnaire invitation email that you received from us, in the box below.
+                                                Copy and paste the token exactly as it appears in that email.
+                                                Your data will only be used for the purposes of this research project, and will remain confidential.</p>
                                     </div>
+{#                                    <div class="row"><div style="margin: 0 auto">#}
+{#                                        <input class="form-text center" type="text" name="name_field" id="name_field" placeholder="Your Wikipedia Username Here"/>#}
+{#                                    </div></div><br>#}
                                     <div class="row"><div style="margin: 0 auto">
-                                        <input class="form-text center" type="text" name="name_field" id="name_field" placeholder="Your Wikipedia Username Here"/>
+                                        <input class="form-text center" type="text" name="name_field" id="name_field" placeholder="Your Participation Token Here"/>
                                     </div></div><br>
                                     <p>Click on the "Submit" button below and wait a few seconds for your recommendations to be generated. Thank you for your patience!</p>
                                 {% endif %}
