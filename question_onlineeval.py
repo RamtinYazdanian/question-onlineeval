@@ -44,7 +44,10 @@ def recom_result():
 
         user_name = result['name_field']
         if token_to_username is not None:
-            user_name = token_to_username.get(user_name, None)
+            user_token = user_name
+            user_name = token_to_username.get(user_token, None)
+            if user_name is None:
+                user_name = token_to_username.get(user_token.strip(), None)
 
         if user_name is None:
             user_name = 'THIS_USER_WAS_NOT_SUPPOSED_TO_BE_IN_THE_STUDY_CAUSE_NO_TOKEN_YEAH_SUCKS'
@@ -183,6 +186,7 @@ def recom_result():
         comparison_pairs = shuffle_dict_using_shuffler(comparison_pairs, shuffler)
 
         print(comparison_pairs)
+        print(user_name)
 
         resp = make_response(render_template("recom_results.html", recoms_dict = final_recoms, recom_count=recom_count,
                             comparison_pairs = comparison_pairs, pairwise_comparison_count = len(comparison_pairs)))
