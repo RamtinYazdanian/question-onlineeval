@@ -193,6 +193,7 @@ def recom_result():
         resp.set_cookie('answers', json.dumps(answers))
         resp.set_cookie('name_field', user_name)
         resp.set_cookie('recom_types', json.dumps(final_recom_field_types))
+        resp.set_cookie('final_recoms', json.dumps(final_recoms))
         resp.set_cookie('comparison_pairs', json.dumps(comparison_pairs))
         resp.set_cookie('n_q', str(n_q))
         resp.set_cookie('recom_count', str(recom_count))
@@ -209,6 +210,7 @@ def thank_you_page():
         user_name = request.cookies.get('name_field')
         recom_types_json = request.cookies.get('recom_types')
         comparison_pairs = request.cookies.get('comparison_pairs')
+        final_recoms = request.cookies.get('final_recoms')
         n_q = request.cookies.get('n_q')
         recom_count = request.cookies.get('recom_count')
         user_feedback = request.form
@@ -222,6 +224,7 @@ def thank_you_page():
         results_to_save_dict['recom_count'] = int(recom_count)
         results_to_save_dict['recom_types'] = json.loads(recom_types_json)
         results_to_save_dict['comparison_pairs'] = json.loads(comparison_pairs)
+        results_to_save_dict['final_recoms'] = json.loads(final_recoms)
         results_to_save_dict['n_q'] = int(n_q)
 
         output_filename = str(datetime.now())
