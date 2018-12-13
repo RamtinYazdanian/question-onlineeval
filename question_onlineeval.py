@@ -84,11 +84,17 @@ def recom_result():
         doc_id_to_name = json.load(open(settings['article_id_to_name'], 'r'))
         doc_id_to_name = {int(x):doc_id_to_name[x] for x in doc_id_to_name}
 
+        # This is for the diversification in the popularity-based recommendations. We generate a dictionary that
+        # maps doc names to their indices for documents whose ids exist in the doc_id_to_index dict.
+        docname_to_docid = invert_dict(doc_id_to_name)
+        docname_to_docindex = {dname: doc_id_to_index[docname_to_docid[dname]] for dname in docname_to_docid
+                               if docname_to_docid[dname] in doc_id_to_index}
+
         # The set (as in Python 'set') of documents that appear in the questions and should be avoided in the
         # recommendations.
 
         documents_to_avoid = set(pickle.load(open(settings['question_doc_ids'], mode='rb'), encoding='latin1'))
-        doc_names_to_avoid = pickle.load(open(settings['question_doc_names'], mode='rb'), encoding='latin1')
+        #doc_names_to_avoid = pickle.load(open(settings['question_doc_names'], mode='rb'), encoding='latin1')
 
         # Both of the following lists are assumed to be lists of ids of top-ranking documents (in each one's
         # respective department).
@@ -131,8 +137,10 @@ def recom_result():
         # diversification scheme). The viewpop and editpop recoms are already randomised
         # so we don't shuffle them.
         random.shuffle(q_based_recommendations)
-        edit_pop_recommendations = get_edit_pop_recoms(edit_pop_list, recom_count // n_baselines)
-        view_pop_recommendations = get_view_pop_recoms(view_pop_list, recom_count // n_baselines)
+        edit_pop_recommendations = get_edit_pop_recoms(edit_pop_list, recom_count // n_baselines,
+                                               docname_to_index=docname_to_docindex, doc_latent=doc_latent)
+        view_pop_recommendations = get_view_pop_recoms(view_pop_list, recom_count // n_baselines,
+                                                       docname_to_index=docname_to_docindex, doc_latent=doc_latent)
 
         if cf_personal_recoms is not None:
             initial_recom_field_types = {0: Q_BASED_STR, 1: VIEW_POP_STR, 2: EDIT_POP_STR, 3: CF_BASED_STR}

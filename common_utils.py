@@ -106,14 +106,26 @@ Samples recom_count articles from the view pop JSON file. The articles will be i
 to detect articles outside ns=0 is to see if they begin with "SOMETHING:STH ELSE").
 """
 
-def get_view_pop_recoms(view_pop_list, recom_count, documents_to_avoid=None):
+def get_view_pop_recoms(view_pop_list, recom_count, documents_to_avoid=None, docname_to_index=None, doc_latent=None):
     regexp = re.compile(r'(.+)(:)[^_]+.*')
     articles_list = [str(x['article']) for x in view_pop_list['items'][0]['articles']]
     articles_list = [x.replace('_', ' ') for x in articles_list
                      if not re.search(regexp, x)]
+
     if documents_to_avoid is not None:
         articles_list = [x for x in articles_list if x not in documents_to_avoid]
-    result_list = sample(articles_list, recom_count)
+    if docname_to_index is None or doc_latent is None:
+        result_list = sample(articles_list, recom_count)
+    else:
+        docindex_to_docname = invert_dict(docname_to_index)
+        # Converting the article names to their indices in our matrix, filtering out the documents that don't have
+        # such an index.
+        article_indices_list = [docname_to_index[article_name] for article_name in articles_list
+                                if article_name in docname_to_index]
+        # Diversifying
+        result_indices_list = diversity_based_clustering(article_indices_list, doc_latent, recom_count)
+        # Back to names
+        result_list = [docindex_to_docname[doc_index] for doc_index in result_indices_list]
     print('Viewpop recoms')
     print(result_list)
     return result_list
@@ -123,13 +135,25 @@ Samples recom_count articles from the view pop CSV file. The articles will be in
 to detect articles outside ns=0 is to see if they begin with "SOMETHING:STH ELSE").
 """
 
-def get_edit_pop_recoms(edit_pop_data, recom_count, documents_to_avoid=None):
+def get_edit_pop_recoms(edit_pop_data, recom_count, documents_to_avoid=None, docname_to_index=None, doc_latent=None):
     regexp = re.compile(r'(.+)(:)[^_]+.*')
     articles_list = [str(','.join(x.split(',')[:x.count(',')-2])).strip('"') for x in edit_pop_data[1:]]
     articles_list = [x.replace('_', ' ') for x in articles_list if not re.search(regexp, x)]
+
     if documents_to_avoid is not None:
         articles_list = [x for x in articles_list if x not in documents_to_avoid]
-    result_list = sample(articles_list, recom_count)
+    if docname_to_index is None or doc_latent is None:
+        result_list = sample(articles_list, recom_count)
+    else:
+        docindex_to_docname = invert_dict(docname_to_index)
+        # Converting the article names to their indices in our matrix, filtering out the documents that don't have
+        # such an index.
+        article_indices_list = [docname_to_index[article_name] for article_name in articles_list
+                                if article_name in docname_to_index]
+        # Diversifying
+        result_indices_list = diversity_based_clustering(article_indices_list, doc_latent, recom_count)
+        # Back to names
+        result_list = [docindex_to_docname[doc_index] for doc_index in result_indices_list]
     print('Editpop recoms')
     print(result_list)
     return result_list
