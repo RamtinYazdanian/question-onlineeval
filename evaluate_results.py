@@ -88,8 +88,9 @@ def get_descriptive_stats(df):
     for question_type in QUESTION_GROUP_TYPES:
         df[question_type] = df[question_type].apply(sign)
     print('Number of "wins", "draws" and "losses" vs each baseline:')
-    df_agg = df.pivot_table(index=['comparison_name'], columns=QUESTION_GROUP_TYPES, aggfunc='size', fill_value=0)
-    print(df_agg)
+    for question_type in QUESTION_GROUP_TYPES:
+        df_agg = df.pivot_table(index=['comparison_name'], columns=question_type, aggfunc='size', fill_value=0)
+        print(df_agg)
 
 
 def main():
