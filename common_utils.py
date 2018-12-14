@@ -13,6 +13,8 @@ EDIT_POP_STR = 'edit_pop'
 CF_BASED_STR = 'cf_based'
 N_RECOM_GROUPS = 6
 
+MINIMUM_MEM = 7 * (2**30)
+
 def make_sure_path_exists(path):
     try:
         os.makedirs(path)

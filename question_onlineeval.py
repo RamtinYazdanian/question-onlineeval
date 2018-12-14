@@ -7,6 +7,7 @@ import numpy as np
 from common_utils import *
 import random
 from datetime import datetime
+import psutil
 
 app = Flask(__name__, static_folder='static')
 
@@ -16,7 +17,13 @@ def q_form():
     n_q = settings['n_q']
     questions = json.load(open(settings['questions'], mode='r'))
     questions = {str(k):questions[str(k)] for k in range(n_q)}
-    resp = make_response(render_template('questions_form.html', questions = questions, n_q = n_q, cloud_dir = settings['cloud_dir']))
+    available_mem = psutil.virtual_memory()[1]
+    if available_mem < MINIMUM_MEM:
+        congestion_warning = True
+    else:
+        congestion_warning = False
+    resp = make_response(render_template('questions_form.html', questions = questions, n_q = n_q,
+                                         cloud_dir = settings['cloud_dir'], congestion_warning=congestion_warning))
     resp.set_cookie('n_q', str(n_q))
     return resp
 
