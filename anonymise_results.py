@@ -7,6 +7,7 @@ def remove_username_field(d):
     if d['name_field'] != 'THIS_USER_WAS_NOT_SUPPOSED_TO_BE_IN_THE_STUDY_CAUSE_NO_TOKEN_YEAH_SUCKS':
         print(d['name_field'])
         d['name_field'] = 'REDACTED'
+    return d
 
 def main():
     input_dir = sys.argv[1]
