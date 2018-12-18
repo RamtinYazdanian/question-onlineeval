@@ -20,7 +20,7 @@ def order_q_based_first(name_and_value):
         new_value = -current_value
         return [new_name, new_value]
 
-def convert_json_to_results(json_file):
+def convert_json_to_results(json_file, mode='cf_only'):
     global GLOBAL_MISSING_FIELD_COUNT
     print(json_file)
     recorded_data = json.load(open(json_file, mode='r', encoding='utf8'))
@@ -28,6 +28,9 @@ def convert_json_to_results(json_file):
     # Maps recom list index to its name (type)
     types_dict = recorded_data['recom_types']
     types_dict = {int(x): types_dict[x] for x in types_dict}
+
+    if mode == 'cf_only' and CF_BASED_STR not in set(types_dict.values()):
+        return None
 
     # Maps comparison index to a list of the two
     comparison_pairs = recorded_data['comparison_pairs']
