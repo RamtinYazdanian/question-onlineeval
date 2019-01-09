@@ -39,7 +39,7 @@ def main():
     with_username_removed = {x: remove_username_field(all_jsons[x]) for x in all_jsons}
     make_sure_path_exists(output_dir)
     for x in with_username_removed:
-        with open(os.path.join(output_dir, 'anon_'+hashlib.md5(x.encode('utf8')).hexdigest()), 'w') as f:
+        with open(os.path.join(output_dir, 'anon_'+hashlib.md5(x.encode('utf8')).hexdigest())+'.json', 'w') as f:
             json.dump(with_username_removed[x], f)
 
 if __name__ == '__main__':
