@@ -17,7 +17,7 @@ def main():
     starting_month = 12
     all_filenames = os.listdir(input_dir)
     all_filenames = [x for x in all_filenames if int(x.split('_')[2]) >= starting_day or
-                                                 int(x.split('_')[3]) != starting_month]
+                                                 int(x.split('_')[1]) != starting_month]
     all_jsons = dict()
     for x in all_filenames:
         print(x)
